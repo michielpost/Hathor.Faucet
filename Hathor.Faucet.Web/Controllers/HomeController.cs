@@ -1,4 +1,5 @@
-﻿using Hathor.Faucet.Web.Models;
+﻿using Hathor.Faucet.Services;
+using Hathor.Faucet.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -12,15 +13,22 @@ namespace Hathor.Faucet.Web.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly HathorService hathorService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, HathorService hathorService)
         {
             _logger = logger;
+            this.hathorService = hathorService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            HomepageViewModel vm = new HomepageViewModel();
+
+            vm.Address = await hathorService.GetAddressAsync();
+            vm.Amount = await hathorService.GetCurrentFundsAsync();
+
+            return View(vm);
         }
 
         public IActionResult Privacy()

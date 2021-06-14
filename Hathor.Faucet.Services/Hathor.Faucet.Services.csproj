@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Hathor" Version="0.8.21" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Hathor.Faucet.Database\Hathor.Faucet.Database.csproj" />
   </ItemGroup>
 
