@@ -29,7 +29,8 @@ namespace Hathor.Faucet.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<FaucetDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), 
+                b => b.MigrationsAssembly(typeof(Startup).Assembly.FullName)));
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 

@@ -9,5 +9,6 @@ namespace Hathor.Faucet.Web.Models
     {
         public string? Address { get; set; }
         public int Amount { get; set; }
+        public int NumberOfTransactions { get; set; }
     }
 }

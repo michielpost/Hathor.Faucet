@@ -14,11 +14,13 @@ namespace Hathor.Faucet.Web.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly HathorService hathorService;
+        private readonly WalletTransactionService walletTransactionService;
 
-        public HomeController(ILogger<HomeController> logger, HathorService hathorService)
+        public HomeController(ILogger<HomeController> logger, HathorService hathorService, WalletTransactionService walletTransactionService)
         {
             _logger = logger;
             this.hathorService = hathorService;
+            this.walletTransactionService = walletTransactionService;
         }
 
         public async Task<IActionResult> Index()
@@ -27,6 +29,7 @@ namespace Hathor.Faucet.Web.Controllers
 
             vm.Address = await hathorService.GetAddressAsync();
             vm.Amount = await hathorService.GetCurrentFundsAsync();
+            vm.NumberOfTransactions = await walletTransactionService.GetNumberOfTransactionsAsync();
 
             return View(vm);
         }
