@@ -1,6 +1,11 @@
+using Hathor.Faucet.Database;
+using Hathor.Faucet.Services;
+using Hathor.Faucet.Services.Models;
+using Hathor.Faucet.Web.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -23,7 +28,19 @@ namespace Hathor.Faucet.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<FaucetDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddDatabaseDeveloperPageExceptionFilter();
+
             services.AddControllersWithViews();
+
+            services.AddScoped<FaucetService>();
+            services.AddScoped<HathorService>();
+            services.AddScoped<WalletTransactionService>();
+
+            //Config
+            services.Configure<HathorConfig>(Configuration.GetSection(nameof(HathorConfig)));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
