@@ -10,8 +10,8 @@ dotnet run -p Hathor.Faucet.Web
 ```
 
 ## Open source credits
-[Hathor.Client](https://github.com/michielpost/Hathor.Client)
-[Bootstrap Template](https://startbootstrap.com/template/business-frontpage)
+- [Hathor.Client](https://github.com/michielpost/Hathor.Client)
+- [Bootstrap Template](https://startbootstrap.com/template/business-frontpage)
 
 ## Acknowledgements
 Development has been made possible with a grant from [Hathor](https://hathor.network).
