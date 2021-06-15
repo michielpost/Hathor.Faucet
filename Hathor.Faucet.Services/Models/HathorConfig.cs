@@ -9,5 +9,8 @@ namespace Hathor.Faucet.Services.Models
     {
         public string? BaseUrl { get; set; }
         public string? ApiKey { get; set; }
+
+        public string? FullNodeBaseUrl { get; set; }
+
     }
 }

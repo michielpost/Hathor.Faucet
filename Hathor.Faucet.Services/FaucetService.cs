@@ -19,15 +19,29 @@ namespace Hathor.Faucet.Services
             address = address.Trim();
             //TODO: Check if address is valid
 
+            //Check if IP is already in database
+
+            //Check if IP is on blocklist (Azure / Amazon / TOR etc)
+
+            //Check if Hathor address is empty
+            bool isEmpty = await hathorService.CheckIsAddressEmptyAsync(address);
+
             int amount = await hathorService.GetCurrentPayoutAsync();
+#if !DEBUG
+            if (!isEmpty)
+                amount = 0;
+#endif
 
             //Save transaction in database
             var dbTx = await walletTransactionService.SaveTransactionAsync(address, amount, ip);
 
             //Send hathor
-            var result = await hathorService.SendHathorAsync(address, amount);
+            if (amount > 0)
+            {
+                var result = await hathorService.SendHathorAsync(address, amount);
 
-            await walletTransactionService.SetHathorTxFinishedAsync(dbTx.Id, result.TxId, result.Success, result.Error);
+                await walletTransactionService.SetHathorTxFinishedAsync(dbTx.Id, result.TxId, result.Success, result.Error);
+            }
 
             return dbTx.Id;
 

@@ -11,11 +11,19 @@
                     <h1 class="display-5 fw-bolder text-white mb-2">Hathor Faucet @Model.Address</h1>
                     <p class="lead text-white-50 mb-4">@Model.Amount.ToHTR() HTR available / Current payout: @Model.CurrentPayout.ToHTR()</p>
                     <div>
-                        <form asp-controller="Home" asp-action="SubmitAddress" method="post">
-                            <input type="text" name="address" />
-                            <button type="submit">Submit</button>
-                        </form>
-
+                        @if (Model.Amount == 0)
+                        {
+                            <p>The faucet is currently empty. Please come back later.</p>
+                            <p>Send some HTR to @Model.Address to fill up the faucet!</p>
+                        }
+                        else
+                        {
+                            <form asp-controller="Home" asp-action="SubmitAddress" method="post">
+                                <input type="text" name="address" />
+                                @Html.RecaptchaWidget()
+                                <button type="submit" class="btn btn-primary btn-lg px-4 me-sm-3">Get Hathor!</button>
+                            </form>
+                        }
 
                     </div>
                     <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">

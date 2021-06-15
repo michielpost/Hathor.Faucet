@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Recaptcha.Web.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,6 +44,8 @@ namespace Hathor.Faucet.Web
 
             //Config
             services.Configure<HathorConfig>(Configuration.GetSection(nameof(HathorConfig)));
+
+            RecaptchaConfigurationManager.SetConfiguration(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

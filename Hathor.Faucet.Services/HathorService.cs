@@ -4,6 +4,7 @@ using Hathor.Models.Responses;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Hathor.Faucet.Services
@@ -12,6 +13,7 @@ namespace Hathor.Faucet.Services
     {
         private readonly HathorConfig hathorConfig;
         private readonly IHathorWalletApi client;
+        private readonly IHathorNodeApi nodeClient;
         private readonly IMemoryCache memoryCache;
         private const int MAX_PAYOUT_CENTS = 2;
         private const string CACHE_KEY_ADDRESS = "address";
@@ -28,9 +30,28 @@ namespace Hathor.Faucet.Services
                 throw new ArgumentNullException(nameof(hathorConfig.BaseUrl));
             if (string.IsNullOrEmpty(hathorConfig.ApiKey))
                 throw new ArgumentNullException(nameof(hathorConfig.ApiKey));
+            if (string.IsNullOrEmpty(hathorConfig.FullNodeBaseUrl))
+                throw new ArgumentNullException(nameof(hathorConfig.FullNodeBaseUrl));
 
             client = HathorClient.GetWalletClient(hathorConfig.BaseUrl, WALLET_ID, hathorConfig.ApiKey);
+            nodeClient = HathorClient.GetNodeClient(hathorConfig.FullNodeBaseUrl);
+
             this.memoryCache = memoryCache;
+        }
+
+        public async Task<bool> CheckIsAddressEmptyAsync(string address)
+        {
+            var balance = await nodeClient.GetBalanceForAddress(address);
+
+            //User already had transactions, not allowed to use the faucet
+            if (balance.TotalTransactions > 0)
+                return false;
+
+            //User already had funds, not allowed to use the faucet
+            if (balance.TokensData.Where(x => x.Value.Received > 0).Any())
+                return false;
+
+            return true;
         }
 
         public async Task<SendTransactionResponse> SendHathorAsync(string address, int amount)

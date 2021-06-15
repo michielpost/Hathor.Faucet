@@ -3,6 +3,8 @@ using Hathor.Faucet.Services;
 using Hathor.Faucet.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Recaptcha.Web;
+using Recaptcha.Web.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -49,6 +51,13 @@ namespace Hathor.Faucet.Web.Controllers
         [Route("submit")]
         public async Task<IActionResult> SubmitAddress([FromForm]string address)
         {
+            RecaptchaVerificationHelper recaptchaHelper = this.GetRecaptchaVerificationHelper();
+            if (string.IsNullOrEmpty(recaptchaHelper.Response))
+               throw new Exception("Captcha answer cannot be empty.");
+            RecaptchaVerificationResult recaptchaResult = recaptchaHelper.VerifyRecaptchaResponse();
+            if (!recaptchaResult.Success)
+                throw new Exception("Incorrect captcha answer.");
+
             string ip = this.HttpContext.Connection.RemoteIpAddress?.ToString() ?? "UNKNOWN";
 
             Guid? result = await faucetService.SendHathorAsync(address, ip);
