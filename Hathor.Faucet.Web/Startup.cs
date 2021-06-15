@@ -34,6 +34,7 @@ namespace Hathor.Faucet.Web
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
+            services.AddMemoryCache();
             services.AddControllersWithViews();
 
             services.AddScoped<FaucetService>();

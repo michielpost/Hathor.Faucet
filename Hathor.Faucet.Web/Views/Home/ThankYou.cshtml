@@ -1,6 +1,7 @@
 ﻿@model ThankYouViewModel
 @{
     bool success = Model.WalletTransaction == null || Model.WalletTransaction.IsSuccess;
+    ViewData["Title"] = success ? "HTR on its way" : "Something went wrong";
 }
 
 @if (!success)
