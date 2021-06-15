@@ -36,7 +36,10 @@ namespace Hathor.Faucet.Web.Controllers
             vm.Address = await hathorService.GetAddressAsync();
             vm.Amount = await hathorService.GetCurrentFundsAsync();
             vm.CurrentPayout = await hathorService.GetCurrentPayoutAsync();
-            vm.NumberOfTransactions = await walletTransactionService.GetNumberOfTransactionsAsync();
+           
+            var history = await walletTransactionService.GetHistoryInfo();
+            vm.NumberOfTransactions = history.count;
+            vm.HistoricPayoutAmount = history.payoutAmount;
 
             return View(vm);
         }

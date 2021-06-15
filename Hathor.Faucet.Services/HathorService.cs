@@ -46,6 +46,7 @@ namespace Hathor.Faucet.Services
 
             //Invalidate funds cache
             memoryCache.Remove(CACHE_KEY_FUNDS);
+            memoryCache.Remove(WalletTransactionService.CACHE_KEY_HISTORY);
 
             return result;
         }

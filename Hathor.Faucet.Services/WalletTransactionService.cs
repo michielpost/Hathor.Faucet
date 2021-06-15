@@ -1,6 +1,7 @@
 ﻿using Hathor.Faucet.Database;
 using Hathor.Faucet.Database.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,15 +13,32 @@ namespace Hathor.Faucet.Services
     public class WalletTransactionService
     {
         private readonly FaucetDbContext dbContext;
+        private readonly IMemoryCache memoryCache;
 
-        public WalletTransactionService(FaucetDbContext dbContext)
+        public static readonly string CACHE_KEY_HISTORY = "historyinfo";
+
+
+        public WalletTransactionService(FaucetDbContext dbContext, IMemoryCache memoryCache)
         {
             this.dbContext = dbContext;
+            this.memoryCache = memoryCache;
         }
 
-        public Task<int> GetNumberOfTransactionsAsync()
+        public async Task<(int count, int payoutAmount)> GetHistoryInfo()
         {
-            return dbContext.WalletTransactions.CountAsync();
+            var result = await memoryCache.GetOrCreateAsync(CACHE_KEY_HISTORY, async (cache) =>
+            {
+                cache.AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1);
+
+                var transactionQuery = dbContext.WalletTransactions.Where(x => x.IsSuccess && x.Amount > 0);
+                var count = await transactionQuery.CountAsync();
+                var payoutAmount = await transactionQuery.SumAsync(x => x.Amount);
+
+                return (count, payoutAmount);
+            });
+
+            return result;
+          
         }
 
         public async Task<WalletTransaction?> GetTransactionAsync(Guid id)
