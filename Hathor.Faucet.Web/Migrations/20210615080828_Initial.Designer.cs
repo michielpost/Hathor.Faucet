@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Hathor.Faucet.Web.Migrations
 {
     [DbContext(typeof(FaucetDbContext))]
-    [Migration("20210614124835_Initial")]
+    [Migration("20210615080828_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,15 +34,23 @@ namespace Hathor.Faucet.Web.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("int");
 
+                    b.Property<DateTimeOffset>("CreatedDateTime")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Error")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("HathorTransactionId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("IpAddress")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTimeOffset>("SendDateTime")
+                    b.Property<bool>("IsSuccess")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("TransactionDateTime")
                         .HasColumnType("datetimeoffset");
 
                     b.HasKey("Id");

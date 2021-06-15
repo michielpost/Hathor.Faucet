@@ -1,5 +1,6 @@
 ﻿using Hathor.Faucet.Services.Models;
 using Hathor.Models.Requests;
+using Hathor.Models.Responses;
 using Microsoft.Extensions.Options;
 using System;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ namespace Hathor.Faucet.Services
     {
         private readonly HathorConfig hathorConfig;
         private readonly IHathorWalletApi client;
+        private const int MAX_PAYOUT_CENTS = 2;
 
         private const string WALLET_ID = "faucet-wallet";
 
@@ -26,7 +28,17 @@ namespace Hathor.Faucet.Services
             client = HathorClient.GetWalletClient(hathorConfig.BaseUrl, WALLET_ID, hathorConfig.ApiKey);
         }
 
-        public async Task StartWallet()
+        public Task<SendTransactionResponse> SendHathorAsync(string address, int amount)
+        {
+            if (amount > MAX_PAYOUT_CENTS || amount <= 0)
+                throw new ArgumentOutOfRangeException(nameof(amount), $"Amount must be > 0 and <= {MAX_PAYOUT_CENTS}");
+
+            var req = new SendTransactionSimpleRequest(address, amount);
+
+            return client.SendTransaction(req);
+        }
+
+        public async Task StartWalletAsync()
         {
             var status = await client.GetStatus();
             if (!status.Success)
@@ -38,7 +50,7 @@ namespace Hathor.Faucet.Services
 
         public async Task<string> GetAddressAsync()
         {
-            await StartWallet();
+            await StartWalletAsync();
 
             var result = await client.GetAddress(0);
 
@@ -50,6 +62,17 @@ namespace Hathor.Faucet.Services
             var result = await client.GetBalance();
 
             return result.Available ?? 0;
+        }
+
+        public async Task<int> GetCurrentPayoutAsync()
+        {
+            var funds = await GetCurrentFundsAsync();
+            if (funds > 150)
+                return MAX_PAYOUT_CENTS;
+            else if (funds > 0)
+                return 1;
+            else
+                return 0;
         }
     }
 }

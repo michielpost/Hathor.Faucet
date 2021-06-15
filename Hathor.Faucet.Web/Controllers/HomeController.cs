@@ -1,4 +1,5 @@
-﻿using Hathor.Faucet.Services;
+﻿using Hathor.Faucet.Database.Models;
+using Hathor.Faucet.Services;
 using Hathor.Faucet.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -15,12 +16,17 @@ namespace Hathor.Faucet.Web.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly HathorService hathorService;
         private readonly WalletTransactionService walletTransactionService;
+        private readonly FaucetService faucetService;
 
-        public HomeController(ILogger<HomeController> logger, HathorService hathorService, WalletTransactionService walletTransactionService)
+        public HomeController(ILogger<HomeController> logger, 
+            HathorService hathorService, 
+            WalletTransactionService walletTransactionService,
+            FaucetService faucetService)
         {
             _logger = logger;
             this.hathorService = hathorService;
             this.walletTransactionService = walletTransactionService;
+            this.faucetService = faucetService;
         }
 
         public async Task<IActionResult> Index()
@@ -29,7 +35,32 @@ namespace Hathor.Faucet.Web.Controllers
 
             vm.Address = await hathorService.GetAddressAsync();
             vm.Amount = await hathorService.GetCurrentFundsAsync();
+            vm.CurrentPayout = await hathorService.GetCurrentPayoutAsync();
             vm.NumberOfTransactions = await walletTransactionService.GetNumberOfTransactionsAsync();
+
+            return View(vm);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Route("submit")]
+        public async Task<IActionResult> SubmitAddress([FromForm]string address)
+        {
+            string ip = this.HttpContext.Connection.RemoteIpAddress?.ToString() ?? "UNKNOWN";
+
+            Guid? result = await faucetService.SendHathorAsync(address, ip);
+
+            return RedirectToAction(nameof(ThankYou), new { txId = result });
+        }
+
+        [Route("thanks")]
+        public async Task<IActionResult> ThankYou([FromQuery]Guid? txId)
+        {
+            ThankYouViewModel vm = new ThankYouViewModel();
+            vm.Address = await hathorService.GetAddressAsync();
+
+            if (txId.HasValue)
+                vm.WalletTransaction = await walletTransactionService.GetTransactionAsync(txId.Value);
 
             return View(vm);
         }

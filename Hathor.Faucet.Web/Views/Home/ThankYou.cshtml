@@ -1,0 +1,25 @@
+﻿@model ThankYouViewModel
+@{
+    bool success = Model.WalletTransaction == null || Model.WalletTransaction.IsSuccess;
+}
+
+@if (!success)
+{
+    <h1>Something went wrong sending your HTR</h1>
+    <p>Message: @Model.WalletTransaction!.Error</p>
+    return;
+}
+
+<h1>You've received some HTR</h1>
+@if (Model.WalletTransaction != null)
+{
+    <p>
+        @Model.WalletTransaction.Amount.ToHTR() HTR was sent to @Model.WalletTransaction.Address
+        <br />
+        Transaction: <a href="https://explorer.hathor.network/transaction/@Model.WalletTransaction.HathorTransactionId" target="_blank">@Model.WalletTransaction.HathorTransactionId</a>
+    </p>
+}
+
+<h2>Next Steps</h2>
+<p>Send some HTR to a friend</p>
+<p>Send some HTR back to the community faucet @Model.Address</p>

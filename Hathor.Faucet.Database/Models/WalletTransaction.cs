@@ -10,9 +10,9 @@ namespace Hathor.Faucet.Database.Models
     public record WalletTransaction
     {
         [Key]
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
-        public DateTimeOffset SendDateTime { get; set; }
+        public DateTimeOffset CreatedDateTime { get; set; } = DateTimeOffset.UtcNow;
 
         public int Amount { get; set; }
 
@@ -20,10 +20,12 @@ namespace Hathor.Faucet.Database.Models
         public string Address { get; set; } = default!;
 
         [Required]
-        public string HathorTransactionId { get; set; } = default!;
-
-        [Required]
         public string IpAddress { get; set; } = default!;
 
+        public string? HathorTransactionId { get; set; } = default!;
+
+        public DateTimeOffset? TransactionDateTime { get; set; }
+        public bool IsSuccess { get; set; }
+        public string? Error { get; set; }
     }
 }

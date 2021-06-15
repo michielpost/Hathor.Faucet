@@ -12,11 +12,14 @@ namespace Hathor.Faucet.Web.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SendDateTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    CreatedDateTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     Amount = table.Column<int>(type: "int", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    HathorTransactionId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IpAddress = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    IpAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    HathorTransactionId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TransactionDateTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    IsSuccess = table.Column<bool>(type: "bit", nullable: false),
+                    Error = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
