@@ -19,13 +19,16 @@
                         }
                         else
                         {
-                            <form asp-controller="Home" asp-action="SubmitAddress" method="post">
+                            <form asp-controller="Home" asp-action="Index" method="post">
                                 <input type="text" name="address" />
                                 @Html.RecaptchaWidget()
                                 <button type="submit" class="btn btn-primary btn-lg px-4 me-sm-3">Get Hathor!</button>
                             </form>
                         }
 
+                    </div>
+                    <div>
+                        <p class="lead text-white-50 mb-2">@Model.ErrorMessage</p>
                     </div>
                     <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
                         @*<a class="btn btn-primary btn-lg px-4 me-sm-3" href="#features">Get Hathor!</a>*@

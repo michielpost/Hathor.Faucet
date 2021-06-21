@@ -25,7 +25,7 @@ namespace Hathor.Faucet.Services
 
         public async Task<Guid> SendHathorAsync(string address, string ip)
         {
-            address = address.Trim().ToLowerInvariant();
+            address = address.Trim();
             if (string.IsNullOrEmpty(address))
                 throw new FaucetException("Empty address. Please provide a valid Hathor address.");
 
