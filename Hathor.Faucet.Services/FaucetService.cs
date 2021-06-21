@@ -10,6 +10,9 @@ using Whois;
 
 namespace Hathor.Faucet.Services
 {
+    /// <summary>
+    /// Faucet logic
+    /// </summary>
     public class FaucetService
     {
         private readonly HathorService hathorService;

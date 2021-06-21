@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace Hathor.Faucet.Services
 {
+    /// <summary>
+    /// Responsible for interacting with Hathor node
+    /// </summary>
     public class HathorService
     {
         private readonly HathorConfig hathorConfig;
@@ -20,7 +23,6 @@ namespace Hathor.Faucet.Services
         private const string CACHE_KEY_FUNDS = "funds";
 
         private const string WALLET_ID = "faucet-wallet";
-
 
         public HathorService(IOptions<HathorConfig> hathorConfigOptions, IOptions<FaucetConfig> faucetConfigOptions, IMemoryCache memoryCache)
         {
@@ -40,6 +42,11 @@ namespace Hathor.Faucet.Services
             this.memoryCache = memoryCache;
         }
 
+        /// <summary>
+        /// Check if address is empty
+        /// </summary>
+        /// <param name="address"></param>
+        /// <returns></returns>
         public async Task<bool> CheckIsAddressEmptyAsync(string address)
         {
             var balance = await nodeClient.GetBalanceForAddress(address);
@@ -55,6 +62,12 @@ namespace Hathor.Faucet.Services
             return true;
         }
 
+        /// <summary>
+        /// Send HTR to address
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="amount"></param>
+        /// <returns></returns>
         public async Task<SendTransactionResponse> SendHathorAsync(string address, int amount)
         {
             if (amount > faucetConfig.MaxPayoutCents || amount <= 0)
@@ -73,6 +86,10 @@ namespace Hathor.Faucet.Services
             return result;
         }
 
+        /// <summary>
+        /// Start Hathor headless wallet
+        /// </summary>
+        /// <returns></returns>
         public async Task StartWalletAsync()
         {
             var status = await client.GetStatus();
@@ -86,6 +103,10 @@ namespace Hathor.Faucet.Services
             }
         }
 
+        /// <summary>
+        /// Get faucet wallet and cache it
+        /// </summary>
+        /// <returns></returns>
         public async Task<string> GetAddressAsync()
         {
             var result = await memoryCache.GetOrCreateAsync<AddressResponse>(CACHE_KEY_ADDRESS, async (cache) =>
@@ -105,6 +126,10 @@ namespace Hathor.Faucet.Services
             return result.Address;
         }
 
+        /// <summary>
+        /// Get current funds in faucet
+        /// </summary>
+        /// <returns></returns>
         public async Task<int> GetCurrentFundsAsync()
         {
             var result = await memoryCache.GetOrCreateAsync<BalanceResponse>(CACHE_KEY_FUNDS, async (cache) =>
@@ -119,17 +144,26 @@ namespace Hathor.Faucet.Services
             return result.Available ?? 0;
         }
 
+        /// <summary>
+        /// Get amount faucet will pay based on current funds in faucet
+        /// </summary>
+        /// <returns></returns>
         public async Task<int> GetCurrentPayoutAsync()
         {
             var funds = await GetCurrentFundsAsync();
             if (funds > 150)
                 return faucetConfig.MaxPayoutCents;
             else if (funds > 0)
-                return 1;
+                return Math.Min(1, faucetConfig.MaxPayoutCents);
             else
                 return 0;
         }
 
+        /// <summary>
+        /// Check if address is valid
+        /// </summary>
+        /// <param name="address"></param>
+        /// <returns></returns>
         public async Task<bool> IsAddressValidAsync(string address)
         {
             var result = await nodeClient.ValidateAddress(address);

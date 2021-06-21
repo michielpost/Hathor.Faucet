@@ -4,7 +4,14 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="Hathor Community Faucet" />
-    <title>@ViewData["Title"] - Hathor Community Faucet</title>
+    @if (string.IsNullOrEmpty(ViewBag.Title))
+    {
+        <title>Hathor Community Faucet</title>
+    }
+    else
+    {
+        <title>@ViewBag.Title - Hathor Community Faucet</title>
+    }
     <link href="~/css/site.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet" />
     <link href="css/styles.min.css" rel="stylesheet" />

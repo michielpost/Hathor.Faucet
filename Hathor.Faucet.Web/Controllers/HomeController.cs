@@ -46,20 +46,6 @@ namespace Hathor.Faucet.Web.Controllers
             return View(vm);
         }
 
-        private async Task<HomepageViewModel> GetHomepageViewModel()
-        {
-            HomepageViewModel vm = new HomepageViewModel();
-
-            vm.Address = await hathorService.GetAddressAsync();
-            vm.Amount = await hathorService.GetCurrentFundsAsync();
-            vm.CurrentPayout = await hathorService.GetCurrentPayoutAsync();
-
-            var history = await walletTransactionService.GetHistoryInfo();
-            vm.NumberOfTransactions = history.count;
-            vm.HistoricPayoutAmount = history.payoutAmount;
-            return vm;
-        }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Index([FromForm]string address)
@@ -115,6 +101,20 @@ namespace Hathor.Faucet.Web.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        private async Task<HomepageViewModel> GetHomepageViewModel()
+        {
+            HomepageViewModel vm = new HomepageViewModel();
+
+            vm.Address = await hathorService.GetAddressAsync();
+            vm.Amount = await hathorService.GetCurrentFundsAsync();
+            vm.CurrentPayout = await hathorService.GetCurrentPayoutAsync();
+
+            var history = await walletTransactionService.GetStats();
+            vm.NumberOfTransactions = history.count;
+            vm.HistoricPayoutAmount = history.payoutAmount;
+            return vm;
         }
     }
 }
