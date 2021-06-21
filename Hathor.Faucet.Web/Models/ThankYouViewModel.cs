@@ -11,5 +11,7 @@ namespace Hathor.Faucet.Web.Models
         public string? Address { get; set; }
 
         public WalletTransaction? WalletTransaction { get; set; }
+
+        public string ExplorerUrl { get; set; } = default!;
     }
 }

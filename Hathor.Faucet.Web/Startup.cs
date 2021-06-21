@@ -44,6 +44,7 @@ namespace Hathor.Faucet.Web
 
             //Config
             services.Configure<HathorConfig>(Configuration.GetSection(nameof(HathorConfig)));
+            services.Configure<FaucetConfig>(Configuration.GetSection(nameof(FaucetConfig)));
 
             RecaptchaConfigurationManager.SetConfiguration(Configuration);
         }

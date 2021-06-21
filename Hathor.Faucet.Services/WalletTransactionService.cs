@@ -47,13 +47,15 @@ namespace Hathor.Faucet.Services
             return result;
         }
 
-        public async Task<WalletTransaction> SaveTransactionAsync(string address, int amount, string ip)
+        public async Task<WalletTransaction> SaveTransactionAsync(string address, int amount, string ip, string? reverseDns, string? whoisOrganization)
         {
             WalletTransaction tx = new WalletTransaction
             {
                 Address = address,
                 Amount = amount,
-                IpAddress = ip
+                IpAddress = ip,
+                ReverseDns = reverseDns,
+                WhoisOrganization = whoisOrganization
             };
 
             dbContext.WalletTransactions.Add(tx);
@@ -77,6 +79,17 @@ namespace Hathor.Faucet.Services
             tx.Error = error;
 
             await dbContext.SaveChangesAsync();
+        }
+
+        public Task<bool> IpHasTransactionsAsync(string ipAddress)
+        {
+            return dbContext.WalletTransactions.Where(x => x.IpAddress == ipAddress).AnyAsync();
+        }
+
+        public Task<int> GetLastHourAmountAsync()
+        {
+            var time = DateTimeOffset.UtcNow.AddHours(-1);
+            return dbContext.WalletTransactions.Where(x => x.CreatedDateTime > time).SumAsync(x => x.Amount);
         }
     }
 }

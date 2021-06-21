@@ -14,8 +14,10 @@ namespace Hathor.Faucet.Web.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedDateTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     Amount = table.Column<int>(type: "int", nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IpAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    IpAddress = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ReverseDns = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    WhoisOrganization = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     HathorTransactionId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TransactionDateTime = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     IsSuccess = table.Column<bool>(type: "bit", nullable: false),
@@ -25,6 +27,16 @@ namespace Hathor.Faucet.Web.Migrations
                 {
                     table.PrimaryKey("PK_WalletTransactions", x => x.Id);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WalletTransactions_Address",
+                table: "WalletTransactions",
+                column: "Address");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WalletTransactions_IpAddress",
+                table: "WalletTransactions",
+                column: "IpAddress");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

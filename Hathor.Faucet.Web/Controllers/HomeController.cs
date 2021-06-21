@@ -1,8 +1,11 @@
 ﻿using Hathor.Faucet.Database.Models;
 using Hathor.Faucet.Services;
+using Hathor.Faucet.Services.Exceptions;
+using Hathor.Faucet.Services.Models;
 using Hathor.Faucet.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Recaptcha.Web;
 using Recaptcha.Web.Mvc;
 using System;
@@ -19,37 +22,47 @@ namespace Hathor.Faucet.Web.Controllers
         private readonly HathorService hathorService;
         private readonly WalletTransactionService walletTransactionService;
         private readonly FaucetService faucetService;
+        private readonly FaucetConfig faucetConfig;
 
         public HomeController(ILogger<HomeController> logger, 
             HathorService hathorService, 
             WalletTransactionService walletTransactionService,
-            FaucetService faucetService)
+            FaucetService faucetService,
+            IOptions<FaucetConfig> faucetConfigOptions
+            )
         {
             _logger = logger;
             this.hathorService = hathorService;
             this.walletTransactionService = walletTransactionService;
             this.faucetService = faucetService;
+            this.faucetConfig = faucetConfigOptions.Value;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
+        {
+            HomepageViewModel vm = await GetHomepageViewModel();
+
+            return View(vm);
+        }
+
+        private async Task<HomepageViewModel> GetHomepageViewModel()
         {
             HomepageViewModel vm = new HomepageViewModel();
 
             vm.Address = await hathorService.GetAddressAsync();
             vm.Amount = await hathorService.GetCurrentFundsAsync();
             vm.CurrentPayout = await hathorService.GetCurrentPayoutAsync();
-           
+
             var history = await walletTransactionService.GetHistoryInfo();
             vm.NumberOfTransactions = history.count;
             vm.HistoricPayoutAmount = history.payoutAmount;
-
-            return View(vm);
+            return vm;
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("submit")]
-        public async Task<IActionResult> SubmitAddress([FromForm]string address)
+        public async Task<IActionResult> Index([FromForm]string address)
         {
             RecaptchaVerificationHelper recaptchaHelper = this.GetRecaptchaVerificationHelper();
             if (string.IsNullOrEmpty(recaptchaHelper.Response))
@@ -60,16 +73,32 @@ namespace Hathor.Faucet.Web.Controllers
 
             string ip = this.HttpContext.Connection.RemoteIpAddress?.ToString() ?? "UNKNOWN";
 
-            Guid? result = await faucetService.SendHathorAsync(address, ip);
+            try
+            {
+                Guid? result = await faucetService.SendHathorAsync(address, ip);
+                return RedirectToAction(nameof(ThankYou), new { txId = result });
+            }
+            catch(FaucetException fe)
+            {
+                HomepageViewModel vm = await GetHomepageViewModel();
+                vm.ErrorMessage = fe.Message;
+                return View(vm);
+            }
+            catch(Exception ex)
+            {
+                HomepageViewModel vm = await GetHomepageViewModel();
+                vm.ErrorMessage = "Something went wrong. Please try again later.";
+                return View(vm);
+            }
 
-            return RedirectToAction(nameof(ThankYou), new { txId = result });
         }
 
         [Route("thanks")]
-        public async Task<IActionResult> ThankYou([FromQuery]Guid? txId)
+        public async Task<IActionResult> ThankYou([FromQuery] Guid? txId)
         {
             ThankYouViewModel vm = new ThankYouViewModel();
             vm.Address = await hathorService.GetAddressAsync();
+            vm.ExplorerUrl = faucetConfig.ExplorerUrl;
 
             if (txId.HasValue)
                 vm.WalletTransaction = await walletTransactionService.GetTransactionAsync(txId.Value);

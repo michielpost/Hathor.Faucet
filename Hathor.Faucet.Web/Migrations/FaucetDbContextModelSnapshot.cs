@@ -27,7 +27,7 @@ namespace Hathor.Faucet.Web.Migrations
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("Amount")
                         .HasColumnType("int");
@@ -43,15 +43,25 @@ namespace Hathor.Faucet.Web.Migrations
 
                     b.Property<string>("IpAddress")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<bool>("IsSuccess")
                         .HasColumnType("bit");
 
+                    b.Property<string>("ReverseDns")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTimeOffset?>("TransactionDateTime")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<string>("WhoisOrganization")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("Address");
+
+                    b.HasIndex("IpAddress");
 
                     b.ToTable("WalletTransactions");
                 });

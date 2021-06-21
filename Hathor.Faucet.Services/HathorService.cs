@@ -12,19 +12,20 @@ namespace Hathor.Faucet.Services
     public class HathorService
     {
         private readonly HathorConfig hathorConfig;
+        private readonly FaucetConfig faucetConfig;
         private readonly IHathorWalletApi client;
         private readonly IHathorNodeApi nodeClient;
         private readonly IMemoryCache memoryCache;
-        private const int MAX_PAYOUT_CENTS = 2;
         private const string CACHE_KEY_ADDRESS = "address";
         private const string CACHE_KEY_FUNDS = "funds";
 
         private const string WALLET_ID = "faucet-wallet";
 
 
-        public HathorService(IOptions<HathorConfig> hathorConfigOptions, IMemoryCache memoryCache)
+        public HathorService(IOptions<HathorConfig> hathorConfigOptions, IOptions<FaucetConfig> faucetConfigOptions, IMemoryCache memoryCache)
         {
             this.hathorConfig = hathorConfigOptions.Value;
+            this.faucetConfig = faucetConfigOptions.Value;
 
             if (string.IsNullOrEmpty(hathorConfig.BaseUrl))
                 throw new ArgumentNullException(nameof(hathorConfig.BaseUrl));
@@ -56,8 +57,8 @@ namespace Hathor.Faucet.Services
 
         public async Task<SendTransactionResponse> SendHathorAsync(string address, int amount)
         {
-            if (amount > MAX_PAYOUT_CENTS || amount <= 0)
-                throw new ArgumentOutOfRangeException(nameof(amount), $"Amount must be > 0 and <= {MAX_PAYOUT_CENTS}");
+            if (amount > faucetConfig.MaxPayoutCents || amount <= 0)
+                throw new ArgumentOutOfRangeException(nameof(amount), $"Amount must be > 0 and <= {faucetConfig.MaxPayoutCents}");
 
             await StartWalletAsync();
 
@@ -122,11 +123,18 @@ namespace Hathor.Faucet.Services
         {
             var funds = await GetCurrentFundsAsync();
             if (funds > 150)
-                return MAX_PAYOUT_CENTS;
+                return faucetConfig.MaxPayoutCents;
             else if (funds > 0)
                 return 1;
             else
                 return 0;
+        }
+
+        public async Task<bool> IsAddressValidAsync(string address)
+        {
+            var result = await nodeClient.ValidateAddress(address);
+
+            return result.Valid;
         }
     }
 }
