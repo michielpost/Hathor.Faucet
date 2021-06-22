@@ -3,9 +3,11 @@
 
 @{
     string h1 = "Hathor Faucet";
+    string placeholder = "HTR address...";
     if (faucetConfig.Value.Network == HathorNetwork.Testnet)
     {
         h1 += " (Testnet)";
+        placeholder = "HTR Testnet address...";
     }
 }
 
@@ -20,12 +22,12 @@
                     <div>
                         @if (Model.Amount == 0)
                         {
-                            <p>The faucet is currently empty. Please come back later.</p>
-                            <p>Send some HTR to @Model.Address to fill up the faucet!</p>
+                            <p class="lead text-white-50 mb-2">The faucet is currently empty. Please come back later.</p>
+                            <p class="lead text-white-50 mb-2">Send some HTR to @Model.Address to fill up the faucet!</p>
                         }
                         else if (Model.CurrentPayout <= 0)
                         {
-                            <p>Faucet is currently disabled.</p>
+                            <p class="lead text-white-50 mb-2">Faucet is currently disabled.</p>
                         }
                         else
                         {
@@ -36,7 +38,7 @@
                     </div>
 
                             <form asp-controller="Home" asp-action="Index" method="post">
-                                <input type="text" name="address" class="form-control" placeholder="HTR address..." value="@ViewBag.address" />
+                                <input type="text" name="address" class="form-control" placeholder="@placeholder" value="@ViewBag.address" />
                                 <center>@Html.RecaptchaWidget()</center>
                                 <button type="submit" class="btn btn-primary btn-lg px-4 me-sm-3">Get Hathor!</button>
                             </form>
