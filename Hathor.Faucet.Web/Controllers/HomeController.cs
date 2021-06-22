@@ -48,35 +48,45 @@ namespace Hathor.Faucet.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Index([FromForm]string address)
+        public async Task<IActionResult> Index([FromForm]string? address)
         {
+            ViewBag.address = address;
+            if (string.IsNullOrEmpty(address))
+                ModelState.AddModelError("address", "Please provide a valid Hathor address.");
+
             RecaptchaVerificationHelper recaptchaHelper = this.GetRecaptchaVerificationHelper();
             if (string.IsNullOrEmpty(recaptchaHelper.Response))
-               throw new Exception("Captcha answer cannot be empty.");
-            RecaptchaVerificationResult recaptchaResult = recaptchaHelper.VerifyRecaptchaResponse();
-            if (!recaptchaResult.Success)
-                throw new Exception("Incorrect captcha answer.");
+            {
+                ModelState.AddModelError("captcha", "Captcha answer cannot be empty.");
+            }
+            else
+            {
+                RecaptchaVerificationResult recaptchaResult = recaptchaHelper.VerifyRecaptchaResponse();
+                if (!recaptchaResult.Success)
+                    ModelState.AddModelError("captcha", "Invalid captcha answer.");
+            }
 
             string ip = this.HttpContext.Connection.RemoteIpAddress?.ToString() ?? "UNKNOWN";
 
             try
             {
-                Guid? result = await faucetService.SendHathorAsync(address, ip);
-                return RedirectToAction(nameof(ThankYou), new { txId = result });
+                if(!string.IsNullOrEmpty(address))
+                {
+                    Guid? result = await faucetService.SendHathorAsync(address, ip);
+                    return RedirectToAction(nameof(ThankYou), new { txId = result });
+                }
             }
             catch(FaucetException fe)
             {
-                HomepageViewModel vm = await GetHomepageViewModel();
-                vm.ErrorMessage = fe.Message;
-                return View(vm);
+                ModelState.AddModelError("faucet", fe.Message);
             }
             catch(Exception ex)
             {
-                HomepageViewModel vm = await GetHomepageViewModel();
-                vm.ErrorMessage = "Something went wrong. Please try again later.";
-                return View(vm);
+                ModelState.AddModelError("faucet", "Something went wrong. Please try again later.");
             }
 
+            HomepageViewModel vm = await GetHomepageViewModel();
+            return View(vm);
         }
 
         [Route("thanks")]

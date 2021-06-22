@@ -45,7 +45,7 @@ namespace Hathor.Faucet.Services
             //Check if IP is already in database
             bool existingIp = await walletTransactionService.IpHasTransactionsAsync(ip);
             if (existingIp && faucetConfig.Network != HathorNetwork.Testnet)
-                throw new FaucetException("This IP has already uses the faucet.");
+                throw new FaucetException("This IP has already used the faucet.");
 
             //Check if IP is on blocklist (Azure / Amazon / TOR etc)
             string whoisOrganization = await GetWhoisInfoAsync(ip);

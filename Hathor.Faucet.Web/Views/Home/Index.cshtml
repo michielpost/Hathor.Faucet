@@ -29,16 +29,19 @@
                         }
                         else
                         {
+                    <div class="bg-danger">
+                        <p class="lead text-body mb-2">@Html.ValidationMessage("address")</p>
+                        <p class="lead text-body mb-2">@Html.ValidationMessage("captcha")</p>
+                        <p class="lead text-body mb-2">@Html.ValidationMessage("faucet")</p>
+                    </div>
+
                             <form asp-controller="Home" asp-action="Index" method="post">
-                                <input type="text" name="address" />
-                                @Html.RecaptchaWidget()
+                                <input type="text" name="address" class="form-control" placeholder="HTR address..." value="@ViewBag.address" />
+                                <center>@Html.RecaptchaWidget()</center>
                                 <button type="submit" class="btn btn-primary btn-lg px-4 me-sm-3">Get Hathor!</button>
                             </form>
                         }
 
-                    </div>
-                    <div>
-                        <p class="lead text-white-50 mb-2">@Model.ErrorMessage</p>
                     </div>
                 </div>
             </div>

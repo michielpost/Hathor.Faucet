@@ -12,6 +12,5 @@ namespace Hathor.Faucet.Web.Models
         public int NumberOfTransactions { get; set; }
         public int CurrentPayout { get; set; }
         public int HistoricPayoutAmount { get; set; }
-        public string? ErrorMessage { get; set; }
     }
 }
