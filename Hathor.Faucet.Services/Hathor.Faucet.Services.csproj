@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Hathor" Version="0.9.0" />
-    <PackageReference Include="Whois" Version="3.0.1" />
+    <PackageReference Include="WhoisClient.NET" Version="3.0.1" />
   </ItemGroup>
 
   <ItemGroup>

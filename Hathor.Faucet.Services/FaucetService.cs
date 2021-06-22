@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Whois;
+using Whois.NET;
 
 namespace Hathor.Faucet.Services
 {
@@ -58,10 +59,10 @@ namespace Hathor.Faucet.Services
             }
 
             //Check if IP is on blocklist (Azure / Amazon / TOR etc)
-            string whoisOrganization = await GetWhoisInfoAsync(ip);
+            string? whoisOrganization = await GetWhoisInfoAsync(ip);
             string reverseDns = await ReverseLookup(ip);
 
-            bool blocked = IsOrganizationBlocked(whoisOrganization);
+            bool blocked = IsOrganizationBlocked(whoisOrganization ?? string.Empty);
             if (blocked && faucetConfig.Network != HathorNetwork.Testnet)
                 throw new FaucetException("This IP is blocked from using the faucet.");
 
@@ -113,6 +114,7 @@ namespace Hathor.Faucet.Services
                 "Amazon",
                 "Google",
                 "Azure",
+                "Microsoft",
                 "CloudFlare",
                 "DigitalOcean",
                 "LeaseWeb"
@@ -123,19 +125,17 @@ namespace Hathor.Faucet.Services
                 .Any();
         }
 
-        private async Task<string> GetWhoisInfoAsync(string ip)
+        private async Task<string?> GetWhoisInfoAsync(string ip)
         {
             try
             {
-                var whois = new WhoisLookup();
+                var response = await WhoisClient.QueryAsync(ip);
 
-                var response = await whois.LookupAsync(ip);
-
-                return response.Registrant.Organization;
+                return response.OrganizationName;
             }
-            catch(Exception)
+            catch(Exception ex)
             {
-                return ip;
+                return ex.ToString();
             }
         }
 
