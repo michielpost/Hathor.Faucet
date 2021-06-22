@@ -18,7 +18,7 @@
                 <div class="text-center my-5">
                     <h1 class="display-5 fw-bolder text-white mb-2">@h1</h1>
                     <p class="lead text-white-50 mb-2">@Model.Address</p>
-                    <p class="lead text-white-50 mb-2">@Model.Amount.ToHTR() HTR available / Current payout: @Model.CurrentPayout.ToHTR()</p>
+                    <p class="lead text-white-50 mb-2">@Model.Amount.ToHTR() HTR available / Current payout: @Model.CurrentPayout.ToHTR() HTR</p>
                     <div>
                         @if (Model.Amount == 0)
                         {
