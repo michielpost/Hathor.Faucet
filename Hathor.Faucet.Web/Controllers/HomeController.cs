@@ -80,6 +80,7 @@ namespace Hathor.Faucet.Web.Controllers
         }
 
         [Route("thanks")]
+        [HttpGet]
         public async Task<IActionResult> ThankYou([FromQuery] Guid? txId)
         {
             ThankYouViewModel vm = new ThankYouViewModel();
@@ -92,6 +93,8 @@ namespace Hathor.Faucet.Web.Controllers
             return View(vm);
         }
 
+        [Route("privacy")]
+        [HttpGet]
         public IActionResult Privacy()
         {
             return View();

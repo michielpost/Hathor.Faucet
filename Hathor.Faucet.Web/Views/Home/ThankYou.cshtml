@@ -4,37 +4,74 @@
     ViewData["Title"] = success ? "HTR on its way" : "Something went wrong";
 }
 
-@if (!success)
-{
-    <h1>Something went wrong sending your HTR</h1>
-    @if (string.IsNullOrEmpty(Model.WalletTransaction?.Error))
-    {
-        <p>Message: @Model.WalletTransaction?.Error</p>
-    }
-    return;
-}
+<section class="py-5 border-bottom">
+    <div class="container px-5 my-5 px-5">
+        <div class="text-body mb-5">
+
+            @if (!success)
+            {
+                <h1>Something went wrong sending your HTR</h1>
+                @if (string.IsNullOrEmpty(Model.WalletTransaction?.Error))
+                {
+                    <p>Message: @Model.WalletTransaction?.Error</p>
+                }
+                return;
+            }
 
 
 
-@if (Model.WalletTransaction != null)
-{
-    @if (Model.WalletTransaction.Amount > 0)
-    {
-        <h1>You've received @Model.WalletTransaction.Amount.ToHTR() HTR</h1>
+            @if (Model.WalletTransaction != null)
+            {
+                @if (Model.WalletTransaction.Amount > 0)
+                {
+                    <h1>You've received @Model.WalletTransaction.Amount.ToHTR() HTR</h1>
 
-        <p>
-            @Model.WalletTransaction.Amount.ToHTR() HTR was sent to @Model.WalletTransaction.Address
-            <br />
-            Transaction: <a href="@Model.ExplorerUrl/transaction/@Model.WalletTransaction.HathorTransactionId" target="_blank">@Model.WalletTransaction.HathorTransactionId</a>
-        </p>
-    }
-    else
-    {
-        <h1>Your wallet has already been used</h1>
-        <p>This faucet is for users new to Hathor, to try out the network.</p>
-    }
-}
+                    <p>
+                        @Model.WalletTransaction.Amount.ToHTR() HTR was sent to @Model.WalletTransaction.Address
+                        <br />
+                        Transaction: <a href="@Model.ExplorerUrl/transaction/@Model.WalletTransaction.HathorTransactionId" target="_blank">@Model.WalletTransaction.HathorTransactionId</a>
+                    </p>
+                }
+                else
+                {
+                    <h1>Your wallet has already been used</h1>
+                    <p>This faucet is for users new to Hathor, to try out the network.</p>
+                }
+            }
+        </div>
+    </div>
+</section>
 
-<h2>Next Steps</h2>
-<p>Send some HTR to a friend</p>
-<p>Send some HTR back to the community faucet @Model.Address</p>
+<section class="bg-light py-5 border-bottom">
+    <div class="container px-5 my-5">
+        <div class="text-center mb-5">
+            <h2 class="fw-bolder">Next Steps</h2>
+        </div>
+        <div class="row gx-5 justify-content-center">
+            <div class="col-lg-6">
+                <div class="card mb-4">
+                    <div class="card-body p-4">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0"><i class="bi bi-people-fill text-primary fs-1"></i></div>
+                            <div class="ms-4">
+                                <h4 class="mb-1">Send some Hathor to a friend!</h4>
+                                <p class="mb-1">Free and instant transactions</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body p-4">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0"><i class="bi bi-droplet-half text-primary fs-1"></i></div>
+                            <div class="ms-4">
+                                <h4 class="mb-1">Fund the faucet</h4>
+                                <p class="mb-1">Send some HTR back to the community faucet @Model.Address</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

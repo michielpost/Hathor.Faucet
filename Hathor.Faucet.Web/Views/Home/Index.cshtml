@@ -1,11 +1,20 @@
 ﻿@model HomepageViewModel
+@inject IOptions<FaucetConfig> faucetConfig
+
+@{
+    string h1 = "Hathor Faucet";
+    if (faucetConfig.Value.Network == HathorNetwork.Testnet)
+    {
+        h1 += " (Testnet)";
+    }
+}
 
 <header class="bg-dark py-5">
     <div class="container px-5">
         <div class="row gx-5 justify-content-center">
             <div class="col-lg-6">
                 <div class="text-center my-5">
-                    <h1 class="display-5 fw-bolder text-white mb-2">Hathor Faucet </h1>
+                    <h1 class="display-5 fw-bolder text-white mb-2">@h1</h1>
                     <p class="lead text-white-50 mb-2">@Model.Address</p>
                     <p class="lead text-white-50 mb-2">@Model.Amount.ToHTR() HTR available / Current payout: @Model.CurrentPayout.ToHTR()</p>
                     <div>
@@ -14,7 +23,7 @@
                             <p>The faucet is currently empty. Please come back later.</p>
                             <p>Send some HTR to @Model.Address to fill up the faucet!</p>
                         }
-                        else if(Model.CurrentPayout <= 0)
+                        else if (Model.CurrentPayout <= 0)
                         {
                             <p>Faucet is currently disabled.</p>
                         }
@@ -31,17 +40,53 @@
                     <div>
                         <p class="lead text-white-50 mb-2">@Model.ErrorMessage</p>
                     </div>
-                    <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
-                        @*<a class="btn btn-primary btn-lg px-4 me-sm-3" href="#features">Get Hathor!</a>*@
-                        <a class="btn btn-outline-light btn-lg px-4" href="#!">Learn More</a>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
 </header>
 
-<div>
-    Number of transactions: @Model.NumberOfTransactions <br />
-    Total payout: @Model.HistoricPayoutAmount.ToHTR() HTR <br />
-</div>
+<section class="py-5 border-bottom">
+    <div class="container px-5 my-5 px-5">
+        <div class="text-center mb-5">
+            <h2 class="fw-bolder">Stats</h2>
+            <p class="lead mb-0">Number of transactions: @Model.NumberOfTransactions </p>
+            <p class="lead mb-0">Total payout: @Model.HistoricPayoutAmount.ToHTR() HTR </p>
+            <br />
+            <p class="text-mb-0">Fund this wallet by sending some HTR to @Model.Address</p>
+            <br />
+            <p class="text-body">This community funded faucet is available for new users who want to try out the Hathor network. It's only intended to use once to experience the speed of Hathor and get some free Hathor to try out the network. You should not use this faucet if you already used Hathor.</p>
+        </div>
+    </div>
+</section>
+
+
+<section class="py-5 border-bottom" id="features">
+    <div class="container px-5 my-5">
+        <div class="row gx-5">
+            <div class="col-lg-4 mb-5 mb-lg-0">
+                <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-wallet2"></i></div>
+                <h2 class="h4 fw-bolder">Download a wallet</h2>
+                <p>Hathor provides official wallets for Windows, Mac, Linux and mobile platforms.</p>
+                <a class="text-decoration-none" href="https://hathor.network/get-started/" target="_blank">
+                    Download a wallet
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+            <div class="col-lg-4 mb-5 mb-lg-0">
+                <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-speedometer2"></i></div>
+                <h2 class="h4 fw-bolder">Instant and free transactions</h2>
+                <p>Get some free HTR using this faucet and experience the speed of Hathor!</p>
+            </div>
+            <div class="col-lg-4 mb-5 mb-lg-0">
+                <div class="feature bg-primary bg-gradient text-white rounded-3 mb-3"><i class="bi bi-globe"></i></div>
+                <h2 class="h4 fw-bolder">Tell your friends</h2>
+                <p>Read more about Hathor, tell your friends and try instant and free transactions.</p>
+                <a class="text-decoration-none" href="https://hathor.network/" target="_blank">
+                    Read more about Hathor
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
