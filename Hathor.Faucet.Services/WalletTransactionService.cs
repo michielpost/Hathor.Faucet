@@ -119,6 +119,16 @@ namespace Hathor.Faucet.Services
             return dbContext.WalletTransactions.Where(x => x.IpAddress == ipAddress).AnyAsync();
         }
 
+        public Task<bool> IpHasTransactionsAsync(string ipAddress, DateTimeOffset since)
+        {
+            return dbContext.WalletTransactions.Where(x => x.IpAddress == ipAddress && x.CreatedDateTime > since).AnyAsync();
+        }
+
+        public Task<bool> AddressHasTransactionsAsync(string address, DateTimeOffset since)
+        {
+            return dbContext.WalletTransactions.Where(x => x.Address == address && x.CreatedDateTime > since).AnyAsync();
+        }
+
         /// <summary>
         /// Get amount of HTR payed out in the last hour
         /// </summary>

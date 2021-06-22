@@ -38,15 +38,15 @@
 
     <footer class="py-5 bg-dark">
         <div class="container px-5"><p class="m-0 text-center text-white">
-    Copyright &copy; Hathor Community Faucet @DateTimeOffset.UtcNow.Year | 
+    Copyright &copy; Hathor Community Faucet @DateTimeOffset.UtcNow.Year | Switch to
 
     @if (faucetConfig.Value.Network == HathorNetwork.Testnet)
     {
-        <a href="https://www.gethathor.com" target="_blank" class="text-white">Mainnet</a>
+        <a href="https://www.gethathor.com" class="text-white">Mainnet</a>
     }
     else
     {
-        <a href="https://testnet.gethathor.com" target="_blank" class="text-white">Testnet</a>
+        <a href="https://testnet.gethathor.com" class="text-white">Testnet</a>
     }
 
               | <a href="https://github.com/michielpost/Hathor.Faucet" target="_blank" class="text-white"><i class="bi bi-github"></i></a>

@@ -59,6 +59,11 @@
             <p class="text-mb-0">Fund this wallet by sending some HTR to @Model.Address</p>
             <br />
             <p class="text-body">This community funded faucet is available for new users who want to try out the Hathor network. It's only intended to use once to experience the speed of Hathor and get some free Hathor to try out the network. You should not use this faucet if you already used Hathor.</p>
+            @if (faucetConfig.Value.Network == HathorNetwork.Testnet)
+            {
+            <p class="text-body">This is the TESTNET version of the faucet. You can use it once every 24 hours.</p>
+
+            }
         </div>
     </div>
 </section>

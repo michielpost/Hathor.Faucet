@@ -10,7 +10,7 @@ namespace Hathor.Faucet.Services.Models
         public HathorNetwork Network { get; set; }
         public int MaxPayoutCents { get; set; } = 2;
         public int TresholdAmountCents { get; set; } = 40;
-        public string ExplorerUrl { get; set; } = "https://explorer.hathor.network/";
+        public string ExplorerUrl { get; set; } = "https://explorer.hathor.network";
 
     }
 

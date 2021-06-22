@@ -43,9 +43,19 @@ namespace Hathor.Faucet.Services
             }
 
             //Check if IP is already in database
-            bool existingIp = await walletTransactionService.IpHasTransactionsAsync(ip);
-            if (existingIp && faucetConfig.Network != HathorNetwork.Testnet)
-                throw new FaucetException("This IP has already used the faucet.");
+            if (faucetConfig.Network == HathorNetwork.Mainnet)
+            {
+                bool existingIp = await walletTransactionService.IpHasTransactionsAsync(ip);
+                if (existingIp)
+                    throw new FaucetException("This IP has already used the faucet.");
+            }
+            else
+            {
+                //For Testnet, once every 24 hours per IP is allowed
+                bool existingIp = await walletTransactionService.IpHasTransactionsAsync(ip, DateTimeOffset.UtcNow.AddDays(-1));
+                if (existingIp)
+                    throw new FaucetException("This IP has already used the faucet in the last 24 hours. Please wait and try again later.");
+            }
 
             //Check if IP is on blocklist (Azure / Amazon / TOR etc)
             string whoisOrganization = await GetWhoisInfoAsync(ip);
@@ -53,7 +63,7 @@ namespace Hathor.Faucet.Services
 
             bool blocked = IsOrganizationBlocked(whoisOrganization);
             if (blocked && faucetConfig.Network != HathorNetwork.Testnet)
-                throw new FaucetException("This IP is blocked from using faucet.");
+                throw new FaucetException("This IP is blocked from using the faucet.");
 
             int lastHourAmount = await walletTransactionService.GetLastHourAmountAsync();
             if (lastHourAmount > faucetConfig.TresholdAmountCents)
@@ -62,11 +72,18 @@ namespace Hathor.Faucet.Services
             int amount = await hathorService.GetCurrentPayoutAsync();
 
             //Check if Hathor address is empty
-            if (faucetConfig.Network != HathorNetwork.Testnet)
+            if (faucetConfig.Network == HathorNetwork.Mainnet)
             {
                 bool isEmpty = await hathorService.CheckIsAddressEmptyAsync(address);
                 if (!isEmpty)
                     amount = 0;
+            }
+            else
+            {
+                //Check if address is only used once in last 24 hours
+                bool existingAddress = await walletTransactionService.AddressHasTransactionsAsync(address, DateTimeOffset.UtcNow.AddDays(-1));
+                if (existingAddress)
+                    throw new FaucetException("This address has already used the faucet in the last 24 hours. Please wait and try again later.");
             }
 
             //Save transaction in database
