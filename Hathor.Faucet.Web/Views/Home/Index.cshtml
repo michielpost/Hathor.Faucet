@@ -14,6 +14,10 @@
                             <p>The faucet is currently empty. Please come back later.</p>
                             <p>Send some HTR to @Model.Address to fill up the faucet!</p>
                         }
+                        else if(Model.CurrentPayout <= 0)
+                        {
+                            <p>Faucet is currently disabled.</p>
+                        }
                         else
                         {
                             <form asp-controller="Home" asp-action="Index" method="post">
