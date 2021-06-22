@@ -24,8 +24,8 @@ namespace Hathor.Faucet.Web.Controllers
         private readonly FaucetService faucetService;
         private readonly FaucetConfig faucetConfig;
 
-        public HomeController(ILogger<HomeController> logger, 
-            HathorService hathorService, 
+        public HomeController(ILogger<HomeController> logger,
+            HathorService hathorService,
             WalletTransactionService walletTransactionService,
             FaucetService faucetService,
             IOptions<FaucetConfig> faucetConfigOptions
@@ -48,7 +48,7 @@ namespace Hathor.Faucet.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Index([FromForm]string? address)
+        public async Task<IActionResult> Index([FromForm] string? address)
         {
             ViewBag.address = address;
             if (string.IsNullOrEmpty(address))
@@ -70,17 +70,17 @@ namespace Hathor.Faucet.Web.Controllers
 
             try
             {
-                if(!string.IsNullOrEmpty(address))
+                if (!string.IsNullOrEmpty(address))
                 {
                     Guid? result = await faucetService.SendHathorAsync(address, ip);
                     return RedirectToAction(nameof(ThankYou), new { txId = result });
                 }
             }
-            catch(FaucetException fe)
+            catch (FaucetException fe)
             {
                 ModelState.AddModelError("faucet", fe.Message);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 ModelState.AddModelError("faucet", "Something went wrong. Please try again later.");
             }
@@ -120,13 +120,28 @@ namespace Hathor.Faucet.Web.Controllers
         {
             HomepageViewModel vm = new HomepageViewModel();
 
-            vm.Address = await hathorService.GetAddressAsync();
-            vm.Amount = await hathorService.GetCurrentFundsAsync();
-            vm.CurrentPayout = await hathorService.GetCurrentPayoutAsync();
+            try
+            {
+                vm.Address = await hathorService.GetAddressAsync();
+                vm.Amount = await hathorService.GetCurrentFundsAsync();
+                vm.CurrentPayout = await hathorService.GetCurrentPayoutAsync();
+            }
+            catch
+            {
+                //No Wallet connection
+            }
 
-            var history = await walletTransactionService.GetStats();
-            vm.NumberOfTransactions = history.count;
-            vm.HistoricPayoutAmount = history.payoutAmount;
+            try
+            {
+                var history = await walletTransactionService.GetStats();
+                vm.NumberOfTransactions = history.count;
+                vm.HistoricPayoutAmount = history.payoutAmount;
+            }
+            catch
+            {
+                //No DB connection
+            }
+
             return vm;
         }
     }
