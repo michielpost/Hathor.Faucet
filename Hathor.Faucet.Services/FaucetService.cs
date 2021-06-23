@@ -63,7 +63,7 @@ namespace Hathor.Faucet.Services
             string reverseDns = await ReverseLookup(ip);
 
             bool blocked = IsOrganizationBlocked(whoisOrganization ?? string.Empty);
-            if (blocked && faucetConfig.Network != HathorNetwork.Testnet)
+            if (blocked)
                 throw new FaucetException("This IP is blocked from using the faucet.");
 
             int lastHourAmount = await walletTransactionService.GetLastHourAmountAsync();
