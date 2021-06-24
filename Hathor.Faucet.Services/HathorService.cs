@@ -136,7 +136,7 @@ namespace Hathor.Faucet.Services
             {
                 var balanceResult = await client.GetBalance();
 
-                cache.SlidingExpiration = TimeSpan.FromHours(1);
+                cache.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1);
 
                 return balanceResult;
             });

@@ -27,8 +27,14 @@
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     <li class="nav-item"><a class="nav-link" aria-current="page" href="/">Home</a></li>
                     <li class="nav-item"><a class="nav-link" asp-action="Privacy">Privacy</a></li>
-                    @* <li class="nav-item"><a class="nav-link" href="#!">Contact</a></li>
-        <li class="nav-item"><a class="nav-link" href="#!">Services</a></li>*@
+                    @if (faucetConfig.Value.Network == HathorNetwork.Testnet)
+                    {
+                        <li class="nav-item"><a href="https://www.gethathor.com" class="nav-link">Mainnet</a></li>
+                    }
+                    else
+                    {
+                        <li class="nav-item"><a href="https://testnet.gethathor.com" class="nav-link">Testnet</a></li>
+                    }
                 </ul>
             </div>
         </div>
@@ -37,21 +43,23 @@
     @RenderBody()
 
     <footer class="py-5 bg-dark">
-        <div class="container px-5"><p class="m-0 text-center text-white">
-    Copyright &copy; Hathor Community Faucet @DateTimeOffset.UtcNow.Year | Switch to
+        <div class="container px-5">
+            <p class="m-0 text-center text-white">
+                Copyright &copy; Hathor Community Faucet @DateTimeOffset.UtcNow.Year | Switch to
 
-    @if (faucetConfig.Value.Network == HathorNetwork.Testnet)
-    {
-        <a href="https://www.gethathor.com" class="text-white">Mainnet</a>
-    }
-    else
-    {
-        <a href="https://testnet.gethathor.com" class="text-white">Testnet</a>
-    }
+                @if (faucetConfig.Value.Network == HathorNetwork.Testnet)
+                {
+                    <a href="https://www.gethathor.com" class="text-white">Mainnet</a>
+                }
+                else
+                {
+                    <a href="https://testnet.gethathor.com" class="text-white">Testnet</a>
+                }
 
-              | <a href="https://github.com/michielpost/Hathor.Faucet" target="_blank" class="text-white"><i class="bi bi-github"></i></a>
+                | <a href="https://github.com/michielpost/Hathor.Faucet" target="_blank" class="text-white"><i class="bi bi-github"></i></a>
 
-</p></div>
+            </p>
+        </div>
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
