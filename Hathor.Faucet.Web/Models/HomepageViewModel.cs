@@ -1,4 +1,5 @@
-﻿using Hathor.Models.Responses;
+﻿using Hathor.Faucet.Database.Models;
+using Hathor.Models.Responses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace Hathor.Faucet.Web.Models
         public int NumberOfTransactions { get; set; }
         public int CurrentPayout { get; set; }
         public int HistoricPayoutAmount { get; set; }
-        public List<Transaction> LastTransactions { get; set; } = new List<Transaction>();
+        public List<WalletTransaction> LastTransactions { get; set; } = new List<WalletTransaction>();
         public string ExplorerUrl { get; set; } = default!;
     }
 }

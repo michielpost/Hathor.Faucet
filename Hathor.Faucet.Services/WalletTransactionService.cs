@@ -19,6 +19,7 @@ namespace Hathor.Faucet.Services
         private readonly IMemoryCache memoryCache;
 
         public static readonly string CACHE_KEY_HISTORY = "historyinfo";
+        public static readonly string CACHE_KEY_TX_HISTORY = "txhistoryinfo";
 
         public WalletTransactionService(FaucetDbContext dbContext, IMemoryCache memoryCache)
         {
@@ -55,6 +56,22 @@ namespace Hathor.Faucet.Services
         public async Task<WalletTransaction?> GetTransactionAsync(Guid id)
         {
             var result = await dbContext.WalletTransactions.Where(x => x.Id == id).FirstOrDefaultAsync();
+            return result;
+        }
+
+        public async Task<List<WalletTransaction>> GetLastTransactions(int count = 10)
+        {
+            var result = await memoryCache.GetOrCreateAsync(CACHE_KEY_TX_HISTORY, async (cache) =>
+            {
+                cache.AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1);
+
+                var result = await dbContext.WalletTransactions.Where(x => x.IsSuccess && x.Amount > 0)
+                .OrderByDescending(x => x.TransactionDateTime).ToListAsync();
+
+                return result;
+
+            });
+
             return result;
         }
 

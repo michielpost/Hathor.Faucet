@@ -120,13 +120,13 @@ namespace Hathor.Faucet.Web.Controllers
         {
             HomepageViewModel vm = new HomepageViewModel();
 
+            vm.ExplorerUrl = faucetConfig.ExplorerUrl;
+
             try
             {
                 vm.Address = await hathorService.GetAddressAsync();
                 vm.Amount = await hathorService.GetCurrentFundsAsync();
                 vm.CurrentPayout = await hathorService.GetCurrentPayoutAsync();
-                vm.LastTransactions = await hathorService.GetLastTransactionsAsync();
-                vm.ExplorerUrl = faucetConfig.ExplorerUrl;
             }
             catch
             {
@@ -138,6 +138,7 @@ namespace Hathor.Faucet.Web.Controllers
                 var history = await walletTransactionService.GetStats();
                 vm.NumberOfTransactions = history.count;
                 vm.HistoricPayoutAmount = history.payoutAmount;
+                vm.LastTransactions = await walletTransactionService.GetLastTransactions();
             }
             catch
             {

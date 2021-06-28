@@ -85,6 +85,7 @@ namespace Hathor.Faucet.Services
             memoryCache.Remove(CACHE_KEY_FUNDS);
             memoryCache.Remove(CACHE_KEY_TX);
             memoryCache.Remove(WalletTransactionService.CACHE_KEY_HISTORY);
+            memoryCache.Remove(WalletTransactionService.CACHE_KEY_TX_HISTORY);
 
             return result;
         }
