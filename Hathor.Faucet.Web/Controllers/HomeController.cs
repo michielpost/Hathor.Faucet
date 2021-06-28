@@ -125,6 +125,8 @@ namespace Hathor.Faucet.Web.Controllers
                 vm.Address = await hathorService.GetAddressAsync();
                 vm.Amount = await hathorService.GetCurrentFundsAsync();
                 vm.CurrentPayout = await hathorService.GetCurrentPayoutAsync();
+                vm.LastTransactions = await hathorService.GetLastTransactionsAsync();
+                vm.ExplorerUrl = faucetConfig.ExplorerUrl;
             }
             catch
             {

@@ -59,12 +59,34 @@
             <p class="lead mb-0">Total payout: @Model.HistoricPayoutAmount.ToHTRString()</p>
             <br />
             <p class="text-mb-0">Fund the faucet wallet by sending some HTR to @Model.Address</p>
-            <br />
             <p class="text-body">This community funded faucet is available for new users who want to try out the Hathor network. It's only intended to use once to experience the speed of Hathor and get some free Hathor to try out the network. You should not use this faucet if you already used Hathor.</p>
             @if (faucetConfig.Value.Network == HathorNetwork.Testnet)
             {
-            <p class="text-body">This is the TESTNET version of the faucet. You can use it once every 24 hours.</p>
+                <p class="text-body">This is the TESTNET version of the faucet. You can use it once every 24 hours.</p>
 
+            }
+
+            @if (Model.LastTransactions.Any())
+            {
+                <h2 class="fw-bolder">Last @Model.LastTransactions.Count Payouts</h2>
+                    @foreach (var tx in Model.LastTransactions)
+                    {
+                        var input = tx.Inputs.Where(x => x.Decoded?.Address == Model.Address).FirstOrDefault();
+                        var output = tx.Outputs.Where(x => x.Value == input?.Value).FirstOrDefault();
+                        if (output == null)
+                            output = tx.Outputs.Where(x => x.Value == Model.CurrentPayout).FirstOrDefault();
+
+                        if (output == null)
+                        {
+                            <a href="@Model.ExplorerUrl/transaction/@tx.TxId" target="_blank" class="badge bg-secondary">@tx.TxId</a><br />
+                        }
+                        else
+                        {
+                            <text>
+                            <a href="@Model.ExplorerUrl/transaction/@tx.TxId" target="_blank" class="badge bg-success">@output.Value.ToHTRString()</a> to <a href="@Model.ExplorerUrl/address/@output.Decoded?.Address" target="_blank" class="badge bg-secondary">@output.Decoded?.Address</a><br />
+                            </text>
+                        }
+                    }
             }
         </div>
     </div>

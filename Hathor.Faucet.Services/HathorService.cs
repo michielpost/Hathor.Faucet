@@ -4,6 +4,7 @@ using Hathor.Models.Responses;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -21,6 +22,7 @@ namespace Hathor.Faucet.Services
         private readonly IMemoryCache memoryCache;
         private const string CACHE_KEY_ADDRESS = "address";
         private const string CACHE_KEY_FUNDS = "funds";
+        private const string CACHE_KEY_TX = "tx";
 
         private const string WALLET_ID = "faucet-wallet";
 
@@ -81,6 +83,7 @@ namespace Hathor.Faucet.Services
 
             //Invalidate funds cache
             memoryCache.Remove(CACHE_KEY_FUNDS);
+            memoryCache.Remove(CACHE_KEY_TX);
             memoryCache.Remove(WalletTransactionService.CACHE_KEY_HISTORY);
 
             return result;
@@ -124,6 +127,23 @@ namespace Hathor.Faucet.Services
             });
 
             return result.Address;
+        }
+
+        public async Task<List<Transaction>> GetLastTransactionsAsync()
+        {
+            var currentAddress = await GetAddressAsync();
+            var result = await memoryCache.GetOrCreateAsync(CACHE_KEY_TX, async (cache) =>
+            {
+                var txResult = await client.GetTxHistory(12);
+
+                var sent = txResult.Where(x => x.Inputs.Where(x => x.Decoded?.Address == currentAddress).Any()).ToList();
+
+                cache.AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(1);
+
+                return sent;
+            });
+
+            return result;
         }
 
         /// <summary>
