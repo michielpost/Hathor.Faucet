@@ -52,10 +52,10 @@ namespace Hathor.Faucet.Services
             }
             else
             {
-                //For Testnet, once every 24 hours per IP is allowed
-                bool existingIp = await walletTransactionService.IpHasTransactionsAsync(ip, DateTimeOffset.UtcNow.AddDays(-1));
+                //For Testnet, once every hour per IP is allowed
+                bool existingIp = await walletTransactionService.IpHasTransactionsAsync(ip, DateTimeOffset.UtcNow.AddHours(-1));
                 if (existingIp)
-                    throw new FaucetException("This IP has already used the faucet in the last 24 hours. Please wait and try again later.");
+                    throw new FaucetException("This IP has already used the faucet in the last hour. Please wait and try again later.");
             }
 
             //Check if IP is on blocklist (Azure / Amazon / TOR etc)
@@ -82,9 +82,9 @@ namespace Hathor.Faucet.Services
             else
             {
                 //Check if address is only used once in last 24 hours
-                bool existingAddress = await walletTransactionService.AddressHasTransactionsAsync(address, DateTimeOffset.UtcNow.AddDays(-1));
+                bool existingAddress = await walletTransactionService.AddressHasTransactionsAsync(address, DateTimeOffset.UtcNow.AddHours(-1));
                 if (existingAddress)
-                    throw new FaucetException("This address has already used the faucet in the last 24 hours. Please wait and try again later.");
+                    throw new FaucetException("This address has already used the faucet in the last hour. Please wait and try again later.");
             }
 
             //Save transaction in database
