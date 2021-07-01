@@ -66,7 +66,7 @@ namespace Hathor.Faucet.Services
                 cache.AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1);
 
                 var result = await dbContext.WalletTransactions.Where(x => x.IsSuccess && x.Amount > 0)
-                .OrderByDescending(x => x.TransactionDateTime).ToListAsync();
+                .OrderByDescending(x => x.TransactionDateTime).Take(count).ToListAsync();
 
                 return result;
 

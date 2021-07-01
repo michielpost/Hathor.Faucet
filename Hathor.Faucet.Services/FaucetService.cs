@@ -117,7 +117,8 @@ namespace Hathor.Faucet.Services
                 "Microsoft",
                 "CloudFlare",
                 "DigitalOcean",
-                "LeaseWeb"
+                "LeaseWeb",
+                "M247"
             };
 
             return blocked.Select(x => whoisOrganization.Contains(x, StringComparison.InvariantCultureIgnoreCase))
