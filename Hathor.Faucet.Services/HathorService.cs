@@ -172,8 +172,12 @@ namespace Hathor.Faucet.Services
         public async Task<int> GetCurrentPayoutAsync()
         {
             var funds = await GetCurrentFundsAsync();
+            int del = 1000;
+            if (faucetConfig.Network == HathorNetwork.Testnet)
+                del = 20;
+
             if (funds > 150)
-                return faucetConfig.MaxPayoutCents;
+                return Math.Min(funds / del, faucetConfig.MaxPayoutCents);
             else if (funds > 0)
                 return Math.Min(1, faucetConfig.MaxPayoutCents);
             else
