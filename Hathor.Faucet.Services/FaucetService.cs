@@ -66,7 +66,20 @@ namespace Hathor.Faucet.Services
             if (blocked)
                 throw new FaucetException("This IP is blocked from using the faucet.");
 
-            int lastHourAmount = await walletTransactionService.GetLastHourAmountAsync();
+            if (faucetConfig.Network == HathorNetwork.Mainnet && !string.IsNullOrEmpty(whoisOrganization))
+            {
+                //Get organization usage from past 30 days
+                var orgUsage = await walletTransactionService.GetOrganizationTransactions(whoisOrganization);
+
+                var pastDays = orgUsage.Where(x => x.CreatedDateTime > DateTimeOffset.UtcNow.AddDays(-1)).Count();
+                var past10Days = orgUsage.Where(x => x.CreatedDateTime > DateTimeOffset.UtcNow.AddDays(-10)).Count();
+                var past30Days = orgUsage.Where(x => x.CreatedDateTime > DateTimeOffset.UtcNow.AddDays(-30)).Count();
+
+                if(pastDays >= 1 || past10Days >= 4 || past30Days >= 8)
+                    throw new FaucetException("This IP is blocked from using the faucet.");
+            }
+
+                int lastHourAmount = await walletTransactionService.GetLastHourAmountAsync();
             if (lastHourAmount > faucetConfig.TresholdAmountCents)
                 throw new FaucetException("Maximum payout reached. Please try again later.");
 

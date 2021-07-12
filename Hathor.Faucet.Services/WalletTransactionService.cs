@@ -101,6 +101,12 @@ namespace Hathor.Faucet.Services
             return tx;
         }
 
+        public Task<List<WalletTransaction>> GetOrganizationTransactions(string whoisOrganization)
+        {
+            var past30 = DateTimeOffset.UtcNow.AddDays(-30);
+            return dbContext.WalletTransactions.Where(x => x.CreatedDateTime > past30 && x.WhoisOrganization == whoisOrganization).ToListAsync();
+        }
+
         /// <summary>
         /// Save Hathor TX ID in DB
         /// </summary>
