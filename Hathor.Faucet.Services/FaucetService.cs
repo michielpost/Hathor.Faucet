@@ -118,7 +118,14 @@ namespace Hathor.Faucet.Services
                 "CloudFlare",
                 "DigitalOcean",
                 "LeaseWeb",
-                "M247"
+                "M247",
+                "Indosat",
+                "PT. ",
+                "Axiata",
+                "Reliance Jio",
+                "Hutchison",
+                "GGSN",
+
             };
 
             return blocked.Select(x => whoisOrganization.Contains(x, StringComparison.InvariantCultureIgnoreCase))
