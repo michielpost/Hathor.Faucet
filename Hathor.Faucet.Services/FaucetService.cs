@@ -75,7 +75,7 @@ namespace Hathor.Faucet.Services
                 var past10Days = orgUsage.Where(x => x.CreatedDateTime > DateTimeOffset.UtcNow.AddDays(-10)).Count();
                 var past30Days = orgUsage.Where(x => x.CreatedDateTime > DateTimeOffset.UtcNow.AddDays(-30)).Count();
 
-                if(pastDays >= 1 || past10Days >= 4 || past30Days >= 8)
+                if(pastDays >= 4 || past10Days >= 15 || past30Days >= 30)
                     throw new FaucetException("This IP is blocked from using the faucet.");
             }
 
