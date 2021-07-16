@@ -38,7 +38,7 @@
                             </div>
 
                             <form asp-controller="Home" asp-action="Index" method="post">
-                                <input type="text" name="address" class="form-control" placeholder="@placeholder" value="@ViewBag.address" />
+                                <input type="text" required name="address" class="form-control" placeholder="@placeholder" value="@ViewBag.address" />
                                 <center>@Html.RecaptchaWidget()</center>
                                 <button type="submit" class="btn btn-primary btn-lg px-4 me-sm-3">Get Hathor!</button>
                             </form>
