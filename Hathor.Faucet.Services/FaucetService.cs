@@ -145,6 +145,7 @@ namespace Hathor.Faucet.Services
                 "EDIS",
                 "Vultr",
                 "vps",
+                "vpn",
                 "24Shells",
                 "PSINet"
             };
