@@ -66,6 +66,10 @@ namespace Hathor.Faucet.Services
             if (blocked)
                 throw new FaucetException("This IP is blocked from using the faucet.");
 
+            blocked = IsOrganizationBlocked(reverseDns);
+            if (blocked)
+                throw new FaucetException("This IP is blocked from using the faucet.");
+
             if (faucetConfig.Network == HathorNetwork.Mainnet && !string.IsNullOrEmpty(whoisOrganization))
             {
                 //Get organization usage from past 30 days
@@ -138,7 +142,11 @@ namespace Hathor.Faucet.Services
                 "Reliance Jio",
                 "Hutchison",
                 "GGSN",
-
+                "EDIS",
+                "Vultr",
+                "vps",
+                "24Shells",
+                "PSINet"
             };
 
             return blocked.Select(x => whoisOrganization.Contains(x, StringComparison.InvariantCultureIgnoreCase))
