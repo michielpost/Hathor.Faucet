@@ -101,10 +101,22 @@ namespace Hathor.Faucet.Services
             return tx;
         }
 
-        public Task<List<WalletTransaction>> GetOrganizationTransactions(string whoisOrganization)
+        public async Task<List<WalletTransaction>> GetOrganizationTransactions(string whoisOrganization)
         {
             var past30 = DateTimeOffset.UtcNow.AddDays(-30);
-            return dbContext.WalletTransactions.Where(x => x.CreatedDateTime > past30 && x.WhoisOrganization == whoisOrganization).ToListAsync();
+            var all = await dbContext.WalletTransactions.Where(x => x.CreatedDateTime > past30 && x.WhoisOrganization == whoisOrganization).ToListAsync();
+
+            if (all.Any())
+                return all;
+
+            if(whoisOrganization.Length > 8)
+            {
+                string searchText = whoisOrganization.Substring(0, 8);
+                all = await dbContext.WalletTransactions.Where(x => x.CreatedDateTime > past30 && x.WhoisOrganization != null &&  x.WhoisOrganization.StartsWith(searchText)).ToListAsync();
+
+            }
+
+            return all;
         }
 
         /// <summary>
