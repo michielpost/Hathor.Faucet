@@ -51,14 +51,10 @@ namespace Hathor.Faucet.Services
         /// <returns></returns>
         public async Task<bool> CheckIsAddressEmptyAsync(string address)
         {
-            var balance = await nodeClient.GetBalanceForAddress(address);
+            var txHistory = await nodeClient.GetAddressHistory(address);
 
             //User already had transactions, not allowed to use the faucet
-            if (balance.TotalTransactions > 0)
-                return false;
-
-            //User already had funds, not allowed to use the faucet
-            if (balance.TokensData.Where(x => x.Value.Received > 0).Any())
+            if (txHistory.History.Any())
                 return false;
 
             return true;
