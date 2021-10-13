@@ -149,7 +149,13 @@ namespace Hathor.Faucet.Services
                 "24Shells",
                 "PSINet",
                 "cdn",
-                "cloud"
+                "cloud",
+                "tor-exit",
+                "torexit",
+                "torproject",
+                "emerald",
+                "exit",
+                "ghost"
             };
 
             return blocked.Select(x => whoisOrganization.Contains(x, StringComparison.InvariantCultureIgnoreCase))
