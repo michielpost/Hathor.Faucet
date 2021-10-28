@@ -37,9 +37,9 @@ namespace Hathor.Faucet.Services
             bool isAddressValid = await hathorService.IsAddressValidAsync(address);
             if (!isAddressValid)
             {
-                if(faucetConfig.Network == HathorNetwork.Testnet)
+                if (faucetConfig.Network == HathorNetwork.Testnet)
                     throw new FaucetException("Please provide a valid Hathor TESTNET address.");
-             
+
                 throw new FaucetException("Please provide a valid Hathor address.");
             }
 
@@ -79,11 +79,11 @@ namespace Hathor.Faucet.Services
                 var past10Days = orgUsage.Where(x => x.CreatedDateTime > DateTimeOffset.UtcNow.AddDays(-10)).Count();
                 var past30Days = orgUsage.Where(x => x.CreatedDateTime > DateTimeOffset.UtcNow.AddDays(-30)).Count();
 
-                if(pastDays >= 2 || past10Days >= 5 || past30Days >= 10)
+                if (pastDays >= 2 || past10Days >= 5 || past30Days >= 10)
                     throw new FaucetException("This IP is blocked from using the faucet.");
             }
 
-                int lastHourAmount = await walletTransactionService.GetLastHourAmountAsync();
+            int lastHourAmount = await walletTransactionService.GetLastHourAmountAsync();
             if (lastHourAmount > faucetConfig.TresholdAmountCents)
                 throw new FaucetException("Maximum payout reached. Please try again later.");
 
@@ -155,7 +155,17 @@ namespace Hathor.Faucet.Services
                 "torproject",
                 "emerald",
                 "exit",
-                "ghost"
+                "ghost",
+                "gthost",
+                "vds",
+                 "server.de",
+                 "node.com",
+                 "hosting",
+                 "webhosting",
+                 "hostpro",
+                 "packethub",
+                 "server",
+                 "zare.com"
             };
 
             return blocked.Select(x => whoisOrganization.Contains(x, StringComparison.InvariantCultureIgnoreCase))
@@ -171,7 +181,7 @@ namespace Hathor.Faucet.Services
 
                 return response.OrganizationName;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return ex.ToString();
             }
@@ -184,9 +194,9 @@ namespace Hathor.Faucet.Services
                 var dnsInfo = await Dns.GetHostEntryAsync(ip);
                 return dnsInfo.HostName;
             }
-            catch (Exception) 
-            { 
-                return ip; 
+            catch (Exception)
+            {
+                return ip;
             }
         }
     }
