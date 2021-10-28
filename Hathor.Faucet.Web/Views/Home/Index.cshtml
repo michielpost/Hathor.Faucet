@@ -18,18 +18,26 @@
                 <div class="text-center my-5">
                     <h1 class="display-5 fw-bolder text-white mb-2">@h1</h1>
                     <p class="lead text-white-50 mb-2">@Model.Address</p>
-                    <p class="lead text-white-50 mb-2">@Model.Amount.ToHTRString() available / Current payout: @Model.CurrentPayout.ToHTRString()</p>
+                    @if (Model.Amount.HasValue)
+                    {
+                        <p class="lead text-white-50 mb-2">@Model.Amount.Value.ToHTRString() available / Current payout: @Model.CurrentPayout.ToHTRString()</p>
+                    }
+                    else
+                    {
+                        <p class="lead text-white-50 mb-2">Unable to reach Hathor Node. Faucet currently disabled.</p>
+
+                    }
                     <div>
-                        @if (Model.Amount == 0)
+                        @if (Model.Amount.HasValue && Model.Amount == 0)
                         {
                             <p class="lead text-white-50 mb-2">The faucet is currently empty. Please come back later.</p>
                             <p class="lead text-white-50 mb-2">Send some HTR to @Model.Address to fill up the faucet!</p>
                         }
                         else if (Model.CurrentPayout <= 0)
                         {
-                            <p class="lead text-white-50 mb-2">Faucet is currently disabled.</p>
+                            <p class="lead text-white-50 mb-2">Faucet is currently unavailable.</p>
                         }
-                        else
+                        else if(Model.Amount.HasValue)
                         {
                             <div class="bg-danger">
                                 <p class="lead text-body mb-2">@Html.ValidationMessage("address")</p>

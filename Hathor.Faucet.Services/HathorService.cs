@@ -1,6 +1,7 @@
 ﻿using Hathor.Faucet.Services.Models;
 using Hathor.Models.Requests;
 using Hathor.Models.Responses;
+using Hathor.Wallet;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using System;
@@ -93,7 +94,7 @@ namespace Hathor.Faucet.Services
         public async Task StartWalletAsync()
         {
             var status = await client.GetStatus();
-            if (!status.Success)
+            if (!status.Success || status.StatusCode != 3)
             {
                 var req = new StartRequest(WALLET_ID, "default");
                 var response = await client.Start(req);
@@ -109,6 +110,22 @@ namespace Hathor.Faucet.Services
         /// <returns></returns>
         public async Task<string> GetAddressAsync()
         {
+
+            var startResult = await memoryCache.GetOrCreateAsync<bool>("start-wallet", async (cache) =>
+            {
+                await StartWalletAsync();
+                cache.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(30);
+
+                return true;
+            });
+
+            if (!string.IsNullOrEmpty(hathorConfig.Seed))
+            {
+                var network = faucetConfig.Network == Models.HathorNetwork.Mainnet ? Wallet.HathorNetwork.Mainnet : Wallet.HathorNetwork.Testnet;
+                var wallet = new HathorWallet(network, hathorConfig.Seed);
+                return wallet.GetAddress(0);
+            }
+
             var result = await memoryCache.GetOrCreateAsync<AddressResponse>(CACHE_KEY_ADDRESS, async (cache) =>
             {
                 await StartWalletAsync();
@@ -147,7 +164,7 @@ namespace Hathor.Faucet.Services
         /// Get current funds in faucet
         /// </summary>
         /// <returns></returns>
-        public async Task<int> GetCurrentFundsAsync()
+        public async Task<int?> GetCurrentFundsAsync()
         {
             var result = await memoryCache.GetOrCreateAsync<BalanceResponse>(CACHE_KEY_FUNDS, async (cache) =>
             {
@@ -158,7 +175,7 @@ namespace Hathor.Faucet.Services
                 return balanceResult;
             });
 
-            return result.Available ?? 0;
+            return result?.Available;
         }
 
         /// <summary>
@@ -168,12 +185,15 @@ namespace Hathor.Faucet.Services
         public async Task<int> GetCurrentPayoutAsync()
         {
             var funds = await GetCurrentFundsAsync();
+            if (funds == null)
+                return 0;
+
             int del = 1000;
-            if (faucetConfig.Network == HathorNetwork.Testnet)
+            if (faucetConfig.Network == Models.HathorNetwork.Testnet)
                 del = 20;
 
             if (funds > 150)
-                return Math.Min(funds / del, faucetConfig.MaxPayoutCents);
+                return Math.Min(funds.Value / del, faucetConfig.MaxPayoutCents);
             else if (funds > 0)
                 return Math.Min(1, faucetConfig.MaxPayoutCents);
             else
