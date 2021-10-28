@@ -124,6 +124,7 @@ namespace Hathor.Faucet.Web.Controllers
 
             try
             {
+                await hathorService.StartWalletCached();
                 vm.Address = await hathorService.GetAddressAsync();
                 vm.Amount = await hathorService.GetCurrentFundsAsync();
                 vm.CurrentPayout = await hathorService.GetCurrentPayoutAsync();

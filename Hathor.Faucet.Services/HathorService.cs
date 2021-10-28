@@ -75,6 +75,7 @@ namespace Hathor.Faucet.Services
             await StartWalletAsync();
 
             var req = new SendTransactionSimpleRequest(address, amount);
+            req.ChangeAddress = await this.GetAddressAsync();
 
             var result = await client.SendTransaction(req);
 
@@ -104,13 +105,8 @@ namespace Hathor.Faucet.Services
             }
         }
 
-        /// <summary>
-        /// Get faucet wallet and cache it
-        /// </summary>
-        /// <returns></returns>
-        public async Task<string> GetAddressAsync()
+        public async Task StartWalletCached()
         {
-
             var startResult = await memoryCache.GetOrCreateAsync<bool>("start-wallet", async (cache) =>
             {
                 await StartWalletAsync();
@@ -118,6 +114,14 @@ namespace Hathor.Faucet.Services
 
                 return true;
             });
+        }
+
+        /// <summary>
+        /// Get faucet wallet and cache it
+        /// </summary>
+        /// <returns></returns>
+        public async Task<string> GetAddressAsync()
+        {
 
             if (!string.IsNullOrEmpty(hathorConfig.Seed))
             {
