@@ -1,6 +1,6 @@
 ﻿@model ThankYouViewModel
 @{
-    bool success = Model.WalletTransaction == null || Model.WalletTransaction.IsSuccess || Model.WalletTransaction.Amount == 0;
+    bool success = Model?.WalletTransaction == null || Model.WalletTransaction.IsSuccess || Model.WalletTransaction.Amount == 0;
     ViewData["Title"] = success ? "HTR on its way" : "Something went wrong";
 }
 
@@ -11,16 +11,16 @@
             @if (!success)
             {
                 <h1>Something went wrong sending your HTR</h1>
-                @if (string.IsNullOrEmpty(Model.WalletTransaction?.Error))
+                @if (string.IsNullOrEmpty(Model?.WalletTransaction?.Error))
                 {
-                    <p>Message: @Model.WalletTransaction?.Error</p>
+                    <p>Message: @Model?.WalletTransaction?.Error</p>
                 }
                 return;
             }
 
 
 
-            @if (Model.WalletTransaction != null)
+            @if (Model?.WalletTransaction != null)
             {
                 @if (Model.WalletTransaction.Amount > 0)
                 {
@@ -66,7 +66,7 @@
                             <div class="flex-shrink-0"><i class="bi bi-droplet-half text-primary fs-1"></i></div>
                             <div class="ms-4">
                                 <h4 class="mb-1">Fund the faucet</h4>
-                                <p class="mb-1">Send some HTR back to the community faucet @Model.Address</p>
+                                <p class="mb-1">Send some HTR back to the community faucet @Model?.Address</p>
                             </div>
                         </div>
                     </div>

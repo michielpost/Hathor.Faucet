@@ -1,6 +1,10 @@
 ﻿@model ErrorViewModel
 @{
     ViewData["Title"] = "Error";
+    if(Model == null)
+    {
+        return;
+    }
 }
 
 <h1 class="text-danger">Error.</h1>
