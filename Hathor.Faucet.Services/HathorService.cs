@@ -97,7 +97,7 @@ namespace Hathor.Faucet.Services
             var status = await client.GetStatus();
             if (!status.Success || status.StatusCode != 3)
             {
-                var req = new StartRequest(WALLET_ID, "default");
+                var req = new StartRequest(WALLET_ID, null, hathorConfig.Seed);
                 var response = await client.Start(req);
 
                 //Wait untill wallet is started

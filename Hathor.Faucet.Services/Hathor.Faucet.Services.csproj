@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Hathor" Version="1.5.1" />
-    <PackageReference Include="Hathor.Wallet" Version="0.1.0" />
+    <PackageReference Include="Hathor" Version="1.6.1" />
+    <PackageReference Include="Hathor.Wallet" Version="0.2.0" />
     <PackageReference Include="WhoisClient.NET" Version="3.0.1" />
   </ItemGroup>
 
