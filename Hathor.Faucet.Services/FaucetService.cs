@@ -62,6 +62,9 @@ namespace Hathor.Faucet.Services
             string? whoisOrganization = await GetWhoisInfoAsync(ip);
             string reverseDns = await ReverseLookup(ip);
 
+            if(reverseDns.Equals(ip, StringComparison.InvariantCultureIgnoreCase) && string.IsNullOrWhiteSpace(whoisOrganization) && faucetConfig.Network == HathorNetwork.Mainnet)
+                throw new FaucetException("This IP is blocked from using the faucet.");
+
             bool blocked = IsOrganizationBlocked(whoisOrganization ?? string.Empty);
             if (blocked)
                 throw new FaucetException("This IP is blocked from using the faucet.");

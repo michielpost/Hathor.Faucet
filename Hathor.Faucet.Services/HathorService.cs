@@ -196,8 +196,12 @@ namespace Hathor.Faucet.Services
             if (faucetConfig.Network == Models.HathorNetwork.Testnet)
                 del = 20;
 
+            var payout = funds.Value / del;
+            if (payout <= 0)
+                payout = 1;
+
             if (funds > 150)
-                return Math.Min(funds.Value / del, faucetConfig.MaxPayoutCents);
+                return Math.Min(payout, faucetConfig.MaxPayoutCents);
             else if (funds > 0)
                 return Math.Min(1, faucetConfig.MaxPayoutCents);
             else
