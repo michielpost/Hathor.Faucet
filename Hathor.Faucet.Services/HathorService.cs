@@ -109,9 +109,14 @@ namespace Hathor.Faucet.Services
         {
             var startResult = await memoryCache.GetOrCreateAsync<bool>("start-wallet", async (cache) =>
             {
-                await StartWalletAsync();
                 cache.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(30);
-
+                try
+                {
+                    await StartWalletAsync();
+                }
+                catch {
+                    return false;
+                }
                 return true;
             });
         }
