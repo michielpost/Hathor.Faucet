@@ -35,8 +35,9 @@
                     <div>
                         @if (Model.Amount.HasValue && Model.Amount == 0)
                         {
-                            <p class="lead text-white-50 mb-2">The faucet is currently empty. Please come back later.</p>
-                            <p class="lead text-white-50 mb-2">Send some HTR to @Model.Address to fill up the faucet!</p>
+                            <p class="lead text-white-50 mb-2">The faucet is currently empty due to abuse from a single user.</p>
+                            @*<p class="lead text-white-50 mb-2">Send some HTR to @Model.Address to fill up the faucet!</p>*@
+                            @*<p class="lead text-white-50 mb-2">Send some HTR to @Model.Address to fill up the faucet!</p>*@
                         }
                         else if (Model.CurrentPayout <= 0)
                         {
