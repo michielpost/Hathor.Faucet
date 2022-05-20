@@ -25,7 +25,7 @@ namespace Hathor.Faucet.Services
         private const string CACHE_KEY_FUNDS = "funds";
         private const string CACHE_KEY_TX = "tx";
 
-        private const string WALLET_ID = "faucet-wallet";
+        private const string WALLET_ID = "faucet-wallet-v2";
 
         public HathorService(IOptions<HathorConfig> hathorConfigOptions, IOptions<FaucetConfig> faucetConfigOptions, IMemoryCache memoryCache)
         {
@@ -75,6 +75,7 @@ namespace Hathor.Faucet.Services
             await StartWalletAsync();
 
             var req = new SendTransactionSimpleRequest(address, amount);
+            req.Token = faucetConfig.Token;
             req.ChangeAddress = await this.GetAddressAsync();
 
             var result = await client.SendTransaction(req);
@@ -177,7 +178,7 @@ namespace Hathor.Faucet.Services
         {
             var result = await memoryCache.GetOrCreateAsync<BalanceResponse>(CACHE_KEY_FUNDS, async (cache) =>
             {
-                var balanceResult = await client.GetBalance();
+                var balanceResult = await client.GetBalance(faucetConfig.Token);
 
                 cache.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1);
 

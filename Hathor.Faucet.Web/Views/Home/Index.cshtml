@@ -14,6 +14,8 @@
     {
         return;
     }
+
+    string token = faucetConfig.Value.Network == HathorNetwork.Mainnet ? "FCT" : "HTR";
 }
 
 <header class="bg-dark py-5">
@@ -25,7 +27,7 @@
                     <p class="lead text-white-50 mb-2">@Model.Address</p>
                     @if (Model.Amount.HasValue)
                     {
-                        <p class="lead text-white-50 mb-2">@Model.Amount.Value.ToHTRString() available / Current payout: @Model.CurrentPayout.ToHTRString()</p>
+                        <p class="lead text-white-50 mb-2">@Model.Amount.Value.ToHTR() @token available / Current payout: @Model.CurrentPayout.ToHTR() @token</p>
                     }
                     else
                     {
@@ -36,13 +38,13 @@
                         @if (Model.Amount.HasValue && Model.Amount == 0)
                         {
                             <p class="lead text-white-50 mb-2">The faucet is currently empty. Please come back later.</p>
-                            <p class="lead text-white-50 mb-2">Send some HTR to @Model.Address to fill up the faucet!</p>
+                            <p class="lead text-white-50 mb-2">Send some @token to @Model.Address to fill up the faucet!</p>
                         }
                         else if (Model.CurrentPayout <= 0)
                         {
                             <p class="lead text-white-50 mb-2">Faucet is currently unavailable.</p>
                         }
-                        else if(Model.Amount.HasValue)
+                        else if (Model.Amount.HasValue)
                         {
                             <div class="bg-danger">
                                 <p class="lead text-body mb-2">@Html.ValidationMessage("address")</p>
@@ -100,9 +102,12 @@
         <div class="text-center mb-5">
             <h2 class="fw-bolder">Stats</h2>
             <p class="lead mb-0">Number of transactions: @Model.NumberOfTransactions </p>
-            <p class="lead mb-0">Total payout: @Model.HistoricPayoutAmount.ToHTRString()</p>
+            <p class="lead mb-0">Total payout: @Model.HistoricPayoutAmount.ToHTR() @token</p>
             <br />
-            <p class="text-mb-0">Fund the faucet wallet by sending some HTR to @Model.Address</p>
+            @if (faucetConfig.Value.Network == HathorNetwork.Mainnet)
+            {
+                <p class="text-mb-0">This faucet will send a Faucet Token (FCT) to your address. It has no value, you can send it back to @Model.Address</p>
+            }
             <p class="text-body">This community funded faucet is available for new users who want to try out the Hathor network. It's only intended to use once to experience the speed of Hathor and get some free Hathor to try out the network. You should not use this faucet if you already used Hathor.</p>
             @if (faucetConfig.Value.Network == HathorNetwork.Testnet)
             {
@@ -115,10 +120,10 @@
                 <h2 class="fw-bolder">Last @Model.LastTransactions.Count Payouts</h2>
                 @foreach (var tx in Model.LastTransactions)
                 {
-                    
-                        <text>
-                            <a href="@Model.ExplorerUrl/transaction/@tx.HathorTransactionId" target="_blank" class="badge bg-success">@tx.Amount.ToHTRString()</a> to <a href="@Model.ExplorerUrl/address/@tx.Address" target="_blank" class="badge bg-secondary">@tx.Address</a><br />
-                        </text>
+
+                    <text>
+                        <a href="@Model.ExplorerUrl/transaction/@tx.HathorTransactionId" target="_blank" class="badge bg-success">@tx.Amount.ToHTR() @token</a> to <a href="@Model.ExplorerUrl/address/@tx.Address" target="_blank" class="badge bg-secondary">@tx.Address</a><br />
+                    </text>
                 }
             }
         </div>
