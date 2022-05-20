@@ -151,7 +151,12 @@ namespace Hathor.Faucet.Services
         /// <returns></returns>
         public Task<bool> IpHasTransactionsAsync(string ipAddress)
         {
-            return dbContext.WalletTransactions.Where(x => x.IpAddress == ipAddress).AnyAsync();
+            var v2LaunchDate = new DateTime(2022, 5, 20);
+
+            return dbContext.WalletTransactions
+                .Where(x => x.CreatedDateTime > v2LaunchDate)
+                .Where(x => x.IpAddress == ipAddress)
+                .AnyAsync();
         }
 
         public Task<bool> IpHasTransactionsAsync(string ipAddress, DateTimeOffset since)
