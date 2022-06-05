@@ -33,7 +33,7 @@
                         <p class="lead text-white-50 mb-2">@Model.Amount.Value.ToHTR() @token available / Current payout: @Model.CurrentPayout.ToHTR() @token</p>
                         @if (faucetConfig.Value.Network == HathorNetwork.Mainnet)
                         {
-                            <p class="lead text-white-50 mb-2">The Faucet Token (FCT) has no value, it's only to demonstrate the speed of the network.</p>
+                            <p class="lead text-white-50 mb-2">The Faucet Token (<a href="https://explorer.hathor.network/token_detail/000002d5d294bdcec3709c7a0c9e0e598480620738e542d5e27343fc84333522" target="_blank" style="color:rgba(255,255,255,.5);text-decoration:underline">FCT</a>) has no value, it's only to demonstrate the speed of the network.</p>
                         }
                     }
                     else
@@ -113,7 +113,7 @@
             <br />
             @if (faucetConfig.Value.Network == HathorNetwork.Mainnet)
             {
-                <p class="text-mb-0">This faucet will send a Faucet Token (FCT) to your address. It has no value, you can send it back to @Model.Address</p>
+                <p class="text-mb-0">This faucet will send a Faucet Token (<a href="https://explorer.hathor.network/token_detail/000002d5d294bdcec3709c7a0c9e0e598480620738e542d5e27343fc84333522" target="_blank">FCT</a>) to your address. It has no value, you can send it back to @Model.Address</p>
             }
             <p class="text-body">This community funded faucet is available for new users who want to try out the Hathor network. It's only intended to use once to experience the speed of Hathor and get some free Hathor to try out the network. You should not use this faucet if you already used Hathor.</p>
             @if (faucetConfig.Value.Network == HathorNetwork.Testnet)
