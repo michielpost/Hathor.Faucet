@@ -72,7 +72,7 @@ namespace Hathor.Faucet.Services
 
             });
 
-            return result;
+            return result ?? new();
         }
 
         /// <summary>
