@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <WarningsAsErrors>nullable;CS8600;CS8601;CS8602;CS8603;CS8625;CS8613;CS8610</WarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Hathor" Version="1.7.0" />
-    <PackageReference Include="Hathor.Wallet" Version="0.2.0" />
+    <PackageReference Include="Hathor" Version="1.9.0" />
+    <PackageReference Include="Hathor.Wallet" Version="0.3.0" />
     <PackageReference Include="WhoisClient.NET" Version="4.0.0" />
   </ItemGroup>
 

@@ -132,7 +132,7 @@ namespace Hathor.Faucet.Services
             if (!string.IsNullOrEmpty(hathorConfig.Seed))
             {
                 var network = faucetConfig.Network == Models.HathorNetwork.Mainnet ? Wallet.HathorNetwork.Mainnet : Wallet.HathorNetwork.Testnet;
-                var wallet = new HathorWallet(network, hathorConfig.Seed);
+                var wallet = new HathorWallet(HathorClient.GetNodeClient("https://node.explorer.hathor.network/v1a/"), network, hathorConfig.Seed);
                 return wallet.GetAddress(0);
             }
 
@@ -150,7 +150,7 @@ namespace Hathor.Faucet.Services
                 return addressResult;
             });
 
-            return result.Address;
+            return result?.Address ?? string.Empty;
         }
 
         public async Task<List<Transaction>> GetLastTransactionsAsync()
@@ -167,7 +167,7 @@ namespace Hathor.Faucet.Services
                 return sent;
             });
 
-            return result;
+            return result ?? new();
         }
 
         /// <summary>
