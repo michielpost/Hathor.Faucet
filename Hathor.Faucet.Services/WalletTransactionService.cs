@@ -103,20 +103,26 @@ namespace Hathor.Faucet.Services
 
         public async Task<List<WalletTransaction>> GetOrganizationTransactions(string whoisOrganization)
         {
-            var past30 = DateTimeOffset.UtcNow.AddDays(-30);
-            var all = await dbContext.WalletTransactions.Where(x => x.CreatedDateTime > past30.DateTime && x.WhoisOrganization == whoisOrganization).ToListAsync();
-
-            if (all.Any())
-                return all;
-
-            if(whoisOrganization.Length > 8)
+            try
             {
-                string searchText = whoisOrganization.Substring(0, 8);
-                all = await dbContext.WalletTransactions.Where(x => x.CreatedDateTime > past30.DateTime && x.WhoisOrganization != null &&  x.WhoisOrganization.StartsWith(searchText)).ToListAsync();
+                var past30 = DateTimeOffset.UtcNow.AddDays(-30);
+                var all = await dbContext.WalletTransactions.Where(x => x.CreatedDateTime > past30.DateTime && x.WhoisOrganization == whoisOrganization).ToListAsync();
 
+                if (all.Any())
+                    return all;
+
+                if (whoisOrganization.Length > 8)
+                {
+                    string searchText = whoisOrganization.Substring(0, 8);
+                    all = await dbContext.WalletTransactions.Where(x => x.CreatedDateTime > past30.DateTime && x.WhoisOrganization != null && x.WhoisOrganization.StartsWith(searchText)).ToListAsync();
+
+                }
+
+                return all;
             }
+            catch { }
 
-            return all;
+            return new();
         }
 
         /// <summary>
@@ -151,22 +157,40 @@ namespace Hathor.Faucet.Services
         /// <returns></returns>
         public Task<bool> IpHasTransactionsAsync(string ipAddress)
         {
-            var v2LaunchDate = new DateTime(2022, 5, 20);
+            try
+            {
+                var v2LaunchDate = new DateTime(2022, 5, 20);
 
-            return dbContext.WalletTransactions
-                .Where(x => x.CreatedDateTime > v2LaunchDate)
-                .Where(x => x.IpAddress == ipAddress)
-                .AnyAsync();
+                return dbContext.WalletTransactions
+                    .Where(x => x.CreatedDateTime > v2LaunchDate)
+                    .Where(x => x.IpAddress == ipAddress)
+                    .AnyAsync();
+            }
+            catch { }
+
+            return Task.FromResult(false);
         }
 
         public Task<bool> IpHasTransactionsAsync(string ipAddress, DateTimeOffset since)
         {
+            try
+            { 
             return dbContext.WalletTransactions.Where(x => x.IpAddress == ipAddress && x.CreatedDateTime > since.DateTime).AnyAsync();
+            }
+            catch { }
+
+            return Task.FromResult(false);
         }
 
         public Task<bool> AddressHasTransactionsAsync(string address, DateTimeOffset since)
         {
-            return dbContext.WalletTransactions.Where(x => x.Address == address && x.CreatedDateTime > since.DateTime).AnyAsync();
+            try
+            {
+                return dbContext.WalletTransactions.Where(x => x.Address == address && x.CreatedDateTime > since.DateTime).AnyAsync();
+            }
+            catch { }
+
+            return Task.FromResult(false);
         }
 
         /// <summary>
@@ -175,8 +199,14 @@ namespace Hathor.Faucet.Services
         /// <returns></returns>
         public Task<int> GetLastHourAmountAsync()
         {
-            var time = DateTimeOffset.UtcNow.AddHours(-1);
-            return dbContext.WalletTransactions.Where(x => x.CreatedDateTime > time.DateTime).SumAsync(x => x.Amount);
+            try
+            {
+                var time = DateTimeOffset.UtcNow.AddHours(-1);
+                return dbContext.WalletTransactions.Where(x => x.CreatedDateTime > time.DateTime).SumAsync(x => x.Amount);
+            }
+            catch { }
+
+            return Task.FromResult(0);
         }
     }
 }
