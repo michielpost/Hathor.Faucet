@@ -155,58 +155,58 @@ namespace Hathor.Faucet.Services
         /// </summary>
         /// <param name="ipAddress"></param>
         /// <returns></returns>
-        public Task<bool> IpHasTransactionsAsync(string ipAddress)
+        public async Task<bool> IpHasTransactionsAsync(string ipAddress)
         {
             try
             {
                 var v2LaunchDate = new DateTime(2022, 5, 20);
 
-                return dbContext.WalletTransactions
+                return await dbContext.WalletTransactions
                     .Where(x => x.CreatedDateTime > v2LaunchDate)
                     .Where(x => x.IpAddress == ipAddress)
                     .AnyAsync();
             }
             catch { }
 
-            return Task.FromResult(false);
+            return false;
         }
 
-        public Task<bool> IpHasTransactionsAsync(string ipAddress, DateTimeOffset since)
+        public async Task<bool> IpHasTransactionsAsync(string ipAddress, DateTimeOffset since)
         {
             try
             { 
-            return dbContext.WalletTransactions.Where(x => x.IpAddress == ipAddress && x.CreatedDateTime > since.DateTime).AnyAsync();
+            return await dbContext.WalletTransactions.Where(x => x.IpAddress == ipAddress && x.CreatedDateTime > since.DateTime).AnyAsync();
             }
             catch { }
 
-            return Task.FromResult(false);
+            return false;
         }
 
-        public Task<bool> AddressHasTransactionsAsync(string address, DateTimeOffset since)
+        public async Task<bool> AddressHasTransactionsAsync(string address, DateTimeOffset since)
         {
             try
             {
-                return dbContext.WalletTransactions.Where(x => x.Address == address && x.CreatedDateTime > since.DateTime).AnyAsync();
+                return await dbContext.WalletTransactions.Where(x => x.Address == address && x.CreatedDateTime > since.DateTime).AnyAsync();
             }
             catch { }
 
-            return Task.FromResult(false);
+            return false;
         }
 
         /// <summary>
         /// Get amount of HTR payed out in the last hour
         /// </summary>
         /// <returns></returns>
-        public Task<int> GetLastHourAmountAsync()
+        public async Task<int> GetLastHourAmountAsync()
         {
             try
             {
                 var time = DateTimeOffset.UtcNow.AddHours(-1);
-                return dbContext.WalletTransactions.Where(x => x.CreatedDateTime > time.DateTime).SumAsync(x => x.Amount);
+                return await dbContext.WalletTransactions.Where(x => x.CreatedDateTime > time.DateTime).SumAsync(x => x.Amount);
             }
             catch { }
 
-            return Task.FromResult(0);
+            return 0;
         }
     }
 }
