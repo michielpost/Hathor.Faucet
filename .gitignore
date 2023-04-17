@@ -348,4 +348,6 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
-/Hathor.Faucet.Web/App_Data
+/Hathor.Faucet.Web/App_Data/localdev.sqlite
+/Hathor.Faucet.Web/App_Data/localdev.sqlite-shm
+/Hathor.Faucet.Web/App_Data/localdev.sqlite-wal
