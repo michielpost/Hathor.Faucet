@@ -35,7 +35,7 @@ namespace Hathor.Faucet.Web
 
             //Local testing
             services.AddDbContext<FaucetDbContext>(options =>
-                options.UseSqlite(new SqliteConnection($"Data Source={Path.Combine("App_Data", "localdev.sqlite")}")));
+                options.UseSqlite(new SqliteConnection($"Data Source={Path.Combine(Environment.CurrentDirectory, "App_Data", "localdev.sqlite")}")));
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
