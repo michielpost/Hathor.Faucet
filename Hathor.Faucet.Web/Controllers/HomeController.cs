@@ -128,23 +128,25 @@ namespace Hathor.Faucet.Web.Controllers
                 vm.Address = await hathorService.GetAddressAsync();
                 vm.Amount = await hathorService.GetCurrentFundsAsync();
                 vm.CurrentPayout = await hathorService.GetCurrentPayoutAsync();
+                //vm.HistoricPayoutAmount = await hathorService.GetTotalPayoutAsync();
+                vm.LastTransactions = await hathorService.GetLastTransactionsAsync();
             }
             catch
             {
                 //No Wallet connection
             }
 
-            try
-            {
-                var history = await walletTransactionService.GetStats();
-                vm.NumberOfTransactions = history.count;
-                vm.HistoricPayoutAmount = history.payoutAmount;
-                vm.LastTransactions = await walletTransactionService.GetLastTransactions();
-            }
-            catch
-            {
-                //No DB connection
-            }
+            //try
+            //{
+            //    var history = await walletTransactionService.GetStats();
+            //    vm.NumberOfTransactions = history.count;
+            //    //vm.HistoricPayoutAmount = history.payoutAmount;
+            //    //vm.LastTransactions = await walletTransactionService.GetLastTransactions();
+            //}
+            //catch
+            //{
+            //    //No DB connection
+            //}
 
             return vm;
         }

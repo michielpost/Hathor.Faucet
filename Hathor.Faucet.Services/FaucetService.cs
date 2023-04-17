@@ -27,7 +27,7 @@ namespace Hathor.Faucet.Services
             this.faucetConfig = faucetConfigOptions.Value;
         }
 
-        public async Task<Guid> SendHathorAsync(string address, string ip)
+        public async Task<Guid?> SendHathorAsync(string address, string ip)
         {
             address = address.Trim();
             if (string.IsNullOrEmpty(address))
@@ -108,17 +108,24 @@ namespace Hathor.Faucet.Services
             }
 
             //Save transaction in database
-            var dbTx = await walletTransactionService.SaveTransactionAsync(address, amount, ip, reverseDns, whoisOrganization);
-
-            //Send hathor
-            if (amount > 0)
+            try
             {
-                var result = await hathorService.SendHathorAsync(address, amount);
+                var dbTx = await walletTransactionService.SaveTransactionAsync(address, amount, ip, reverseDns, whoisOrganization);
 
-                await walletTransactionService.SetHathorTxFinishedAsync(dbTx.Id, result.TxId, result.Success, result.Error);
+                //Send hathor
+                if (amount > 0)
+                {
+                    var result = await hathorService.SendHathorAsync(address, amount);
+
+                    await walletTransactionService.SetHathorTxFinishedAsync(dbTx.Id, result.TxId, result.Success, result.Error);
+                }
+
+                return dbTx.Id;
             }
-
-            return dbTx.Id;
+            catch {
+                var result = await hathorService.SendHathorAsync(address, amount);
+                return null;
+            }
 
         }
 
