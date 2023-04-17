@@ -107,10 +107,10 @@
 <section class="py-5 border-bottom">
     <div class="container px-5 px-5">
         <div class="text-center mb-5">
-            <h2 class="fw-bolder">Stats</h2>
+            @*<h2 class="fw-bolder">Stats</h2>
             <p class="lead mb-0">Number of transactions: @Model.NumberOfTransactions </p>
             <p class="lead mb-0">Total payout: @Model.HistoricPayoutAmount.ToHTR() @token</p>
-            <br />
+            <br />*@
             @if (faucetConfig.Value.Network == HathorNetwork.Mainnet)
             {
                 <p class="text-mb-0">This faucet will send a Faucet Token (<a href="https://explorer.hathor.network/token_detail/000002d5d294bdcec3709c7a0c9e0e598480620738e542d5e27343fc84333522" target="_blank">FCT</a>) to your address. It has no value, you can send it back to @Model.Address</p>
@@ -127,9 +127,10 @@
                 <h2 class="fw-bolder">Last @Model.LastTransactions.Count Payouts</h2>
                 @foreach (var tx in Model.LastTransactions)
                 {
+                    var output = tx.Outputs.OrderBy(x => x.Value).FirstOrDefault(x => x.Token == faucetConfig.Value.Token);
 
                     <text>
-                        <a href="@Model.ExplorerUrl/transaction/@tx.HathorTransactionId" target="_blank" class="badge bg-success">@tx.Amount.ToHTR() @token</a> to <a href="@Model.ExplorerUrl/address/@tx.Address" target="_blank" class="badge bg-secondary">@tx.Address</a><br />
+                        <a href="@Model.ExplorerUrl/transaction/@tx.TxId" target="_blank" class="badge bg-success">@output?.Value.ToHTR() @token</a> to <a href="@Model.ExplorerUrl/address/@output?.Decoded?.Address" target="_blank" class="badge bg-secondary">@output?.Decoded?.Address</a><br />
                     </text>
                 }
             }

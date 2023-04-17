@@ -83,6 +83,7 @@ namespace Hathor.Faucet.Services
             //Invalidate funds cache
             memoryCache.Remove(CACHE_KEY_FUNDS);
             memoryCache.Remove(CACHE_KEY_TX);
+            memoryCache.Remove(nameof(GetTotalPayoutAsync));
             memoryCache.Remove(WalletTransactionService.CACHE_KEY_HISTORY);
             memoryCache.Remove(WalletTransactionService.CACHE_KEY_TX_HISTORY);
 
@@ -168,6 +169,21 @@ namespace Hathor.Faucet.Services
             });
 
             return result ?? new();
+        }
+
+        public async Task<int> GetTotalPayoutAsync()
+        {
+            var currentAddress = await GetAddressAsync();
+            var result = await memoryCache.GetOrCreateAsync(nameof(GetTotalPayoutAsync), async (cache) =>
+            {
+                var infoResult = await client.GetAddressInfo(currentAddress, faucetConfig.Token);
+
+                cache.AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(1);
+
+                return infoResult.TotalAmountReceived - infoResult.TotalAmountSent;
+            });
+
+            return result;
         }
 
         /// <summary>

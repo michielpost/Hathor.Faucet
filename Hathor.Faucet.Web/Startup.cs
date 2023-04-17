@@ -13,6 +13,7 @@ using Microsoft.Extensions.Hosting;
 using Recaptcha.Web.Configuration;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -32,18 +33,9 @@ namespace Hathor.Faucet.Web
         {
             var connectionString = Configuration.GetConnectionString("DefaultConnection");
 
-            if (!string.IsNullOrEmpty(connectionString))
-            {
-                services.AddDbContext<FaucetDbContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
-                    b => b.MigrationsAssembly(typeof(Startup).Assembly.FullName)));
-            }
-            else
-            {
-                //Local testing
-                services.AddDbContext<FaucetDbContext>(options =>
-                    options.UseSqlite(new SqliteConnection("Filename=localdev.sqlite")));
-            }
+            //Local testing
+            services.AddDbContext<FaucetDbContext>(options =>
+                options.UseSqlite(new SqliteConnection($"Filename={Path.Combine("App_Data", "localdev.sqlite")}")));
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 

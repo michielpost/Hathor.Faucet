@@ -14,7 +14,7 @@ namespace Hathor.Faucet.Web.Models
         public int NumberOfTransactions { get; set; }
         public int CurrentPayout { get; set; }
         public int HistoricPayoutAmount { get; set; }
-        public List<WalletTransaction> LastTransactions { get; set; } = new List<WalletTransaction>();
+        public List<Transaction> LastTransactions { get; set; } = new List<Transaction>();
         public string ExplorerUrl { get; set; } = default!;
     }
 }

@@ -15,7 +15,7 @@ namespace Hathor.Faucet.Database.Models
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
 
-        public DateTimeOffset CreatedDateTime { get; set; } = DateTimeOffset.UtcNow;
+        public DateTime CreatedDateTime { get; set; } = DateTime.UtcNow;
 
         public int Amount { get; set; }
 
@@ -30,7 +30,7 @@ namespace Hathor.Faucet.Database.Models
 
         public string? HathorTransactionId { get; set; } = default!;
 
-        public DateTimeOffset? TransactionDateTime { get; set; }
+        public DateTime? TransactionDateTime { get; set; }
         public bool IsSuccess { get; set; }
         public string? Error { get; set; }
 
