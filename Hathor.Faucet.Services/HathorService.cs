@@ -25,7 +25,8 @@ namespace Hathor.Faucet.Services
         private const string CACHE_KEY_FUNDS = "funds";
         private const string CACHE_KEY_TX = "tx";
 
-        private const string WALLET_ID = "faucet-wallet-v2";
+        //private const string WALLET_ID = "faucet-wallet-v2";
+        private const string WALLET_ID = "nano-testnet-faucet";
 
         public HathorService(IOptions<HathorConfig> hathorConfigOptions, IOptions<FaucetConfig> faucetConfigOptions, IMemoryCache memoryCache)
         {
@@ -133,7 +134,7 @@ namespace Hathor.Faucet.Services
             if (!string.IsNullOrEmpty(hathorConfig.Seed))
             {
                 var network = faucetConfig.Network == Models.HathorNetwork.Mainnet ? Wallet.HathorNetwork.Mainnet : Wallet.HathorNetwork.Testnet;
-                var wallet = new HathorWallet(HathorClient.GetNodeClient("https://node.explorer.hathor.network/v1a/"), network, hathorConfig.Seed);
+                var wallet = new HathorWallet(HathorClient.GetNodeClient(hathorConfig.FullNodeBaseUrl!), network, hathorConfig.Seed);
                 return wallet.GetAddress(0);
             }
 
